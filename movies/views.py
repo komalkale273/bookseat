@@ -84,3 +84,7 @@ def book_seats(request, theater_id):
         'theater': theaters, "seats": seats
     })
 
+
+
+
+

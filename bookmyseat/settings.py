@@ -6,7 +6,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 
-SECRET_KEY = 'django-insecure-%*ih34_#5wezfcq&@+a@a1xg)5b$5f1n6b=c3sta&#83%jtke2'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'your-default-secret-key')
+
 
 
 DEBUG = True
@@ -41,7 +42,8 @@ MIDDLEWARE = [
 AUTH_USER_MODEL='auth.User'
 EMAIL_BACKEND='django.core.mail.backends.console.EmailBackend'
 MEDIA_URL='media'
-MEDIA_ROOT=os.path.join(BASE_DIR,'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
 ROOT_URLCONF = 'bookmyseat.urls'
 LOGIN_URL='/login/'
 
@@ -126,5 +128,11 @@ STATIC_ROOT = os.path.join(BASE_DIR,'staticfiles')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'kalekomal477@gmail.com'  # Replace with your email
+EMAIL_HOST_PASSWORD = '12345'  # Replace with your app password
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 

@@ -1,0 +1,93 @@
+{% extends "users/basic.html" %} 
+
+{% block content %}
+<div class="about-container">
+    <h1>About Us</h1>
+    <p>Welcome to <strong>BookMySeat</strong>, your reliable seat booking platform. We aim to provide a seamless experience for reserving seats at events, cinemas, and more.</p>
+
+    <div class="about-section">
+        <h2>Our Mission</h2>
+        <p>We strive to make the booking process simple, fast, and secure for everyone.</p>
+    </div>
+
+    <div class="about-section">
+        <h2>Why Choose Us?</h2>
+        <ul>
+            <li>Easy and user-friendly booking interface</li>
+            <li>Secure and hassle-free payments</li>
+            <li>Real-time seat availability</li>
+            <li>Instant booking confirmation</li>
+            <li>24/7 customer support</li>
+        </ul>
+    </div>
+</div>
+
+<style>
+    body {
+        background: #f0f8ff; 
+        background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBO56Epbjh3jHTKFQOx0ROLv1_gFWn9GGMHA&s'); 
+        background-size: cover;
+        background-position: center;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    .about-container {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 30px;
+        background: rgba(255, 255, 255, 0.85); 
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    h1 {
+        color: #333;
+        font-size: 2.5em;
+        margin-bottom: 10px;
+    }
+
+    p {
+        color: #555;
+        font-size: 1.2em;
+        margin-bottom: 20px;
+    }
+
+    .about-section {
+        margin-top: 30px;
+        padding: 20px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+        color: #444;
+        font-size: 1.8em;
+        margin-bottom: 10px;
+    }
+
+    ul {
+        text-align: center;
+        list-style: none;
+        padding-left: 0;
+    }
+
+    ul li {
+        font-size: 1.1em;
+        padding: 8px;
+        color: #666;
+    }
+
+    a {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}

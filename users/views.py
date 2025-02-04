@@ -1,9 +1,12 @@
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
-from .forms import UserRegisterForm, UserUpdateForm
+from .forms import UserRegisterForm, UserUpdateForm, ContactMessage
 from django.shortcuts import render,redirect
 from django.contrib.auth import login,authenticate
 from django.contrib.auth.decorators import login_required
 from movies.models import Movie , Booking
+from django.core.mail import send_mail
+from django.contrib import messages
+from django.conf import settings
 
 def home(request):
     movies= Movie.objects.all()
@@ -56,3 +59,32 @@ def reset_password(request):
     else:
         form=PasswordChangeForm(user=request.user)
     return render(request,'users/reset_password.html',{'form':form})
+
+def about(request):
+    return render(request, 'users/about.html')
+
+
+
+def contact(request):
+    if request.method == "POST":
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        message = request.POST.get('message')
+
+        if name and email and message:
+            # Save message to database (optional)
+            ContactMessage.objects.create(name=name, email=email, message=message)
+
+            # Send an email (optional)
+            send_mail(
+                f'Contact Form Submission from {name}',
+                message,
+                settings.DEFAULT_FROM_EMAIL,
+                [settings.DEFAULT_FROM_EMAIL],  # Replace with your email
+                fail_silently=False,
+            )
+
+            messages.success(request, "Your message has been sent successfully!")
+            return redirect('contact')
+
+    return render(request, 'users/contact.html')

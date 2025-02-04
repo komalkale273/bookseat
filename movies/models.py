@@ -37,3 +37,5 @@ class Booking(models.Model):
     booked_at=models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return f'Booking by{self.user.username} for {self.seat.seat_number} at {self.theater.name}'
+    
+

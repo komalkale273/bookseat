@@ -1,5 +1,8 @@
 from django.urls import path
-from .views import register, login_view, profile, reset_password, home
+from . import views
+
+from .views import register, login_view, profile, reset_password, home, about, contact
+
 from django.contrib.auth import views as auth_views
 
 class CustomLogoutView(auth_views.LogoutView):
@@ -11,6 +14,8 @@ urlpatterns = [
     path('register/', register, name='register'),
     path('login/', login_view, name='login'),
     path('profile/', profile, name='profile'),
+    path('about/', about, name='about'),
+    path('contact/', contact, name='contact'),
     path('reset-password/', reset_password, name='reset-password'),
     path('logout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name='logout'),
     path('password-reset/',
