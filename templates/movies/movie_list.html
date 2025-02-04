@@ -1,0 +1,192 @@
+{% extends "users/basic.html" %} {% block content %}
+<div class="container py-5">
+  <h1 class="text-center mb-5">Movies</h1>
+
+  <div class="row justify-content-center mb-5">
+    <div class="col-md-8">
+      <form method="GET" action="{% url 'movie_list' %}" class="search-bar">
+        <div class="input-group">
+          <input
+            class="form-control form-control-lg"
+            name="search"
+            placeholder="Search for Movies, Events, Plays, Sports and Activities"
+            type="text"
+            value="{{ request.GET.search|default_if_none:'' }}"
+            aria-label="Search for movies"
+          />
+          <div class="input-group-append">
+            <button class="btn btn-primary" type="submit">
+              <i class="fas fa-search"></i> Search
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+<<<<<<< HEAD
+  <!-- Swiper Container -->
+  <div class="swiper mySwiper" id="movieSwiper">
+    <div class="swiper-wrapper">
+      {% for movie in movies %}
+      <div class="swiper-slide">
+        <div class="card h-100 shadow-sm">
+          <img
+            src="{{ movie.image.url }}"
+            class="card-img-top"
+            alt="{{ movie.name }}"
+            style="height: 300px; object-fit: cover"
+          />
+          <div class="card-body">
+            <h5 class="card-title">{{ movie.name }}</h5>
+            <p class="card-text">
+              <i class="fas fa-star text-warning"></i> {{ movie.rating }}
+            </p>
+            <p class="card-text">
+              <small class="text-muted">
+                <i class="fas fa-users"></i> Cast: {{ movie.cast }}
+              </small>
+            </p>
+          </div>
+          <div class="card-footer bg-white border-top-0">
+            <a
+              href="{% url 'theater_list' movie.id %}"
+              class="btn btn-outline-primary btn-block"
+            >
+              View Theaters <i class="fas fa-chevron-right ml-2"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="swiper-slide">
+        <p class="lead text-center">No movies found. Try a different search term.</p>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Swiper Navigation and Pagination -->
+    <div class="swiper-pagination"></div>
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
+  </div>
+</div>
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Swiper JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<!-- Font Awesome -->
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+/>
+=======
+  <swiper-container class="mySwiper" slides-per-view="4" space-between="10" pagination="true" pagination-dynamic-bullets="true" navigation="true">
+    {% for movie in movies %}
+    <swiper-slide>
+      <div class="card h-100 shadow-sm">
+        <img
+          src="{{ movie.image.url }}"
+          class="card-img-top"
+          alt="{{ movie.name }}"
+          style="height: 300px; object-fit: cover"
+        />
+        <div class="card-body">
+          <h5 class="card-title">{{ movie.name }}</h5>
+          <p class="card-text">
+            <i class="fas fa-star text-warning"></i> {{ movie.rating }}
+          </p>
+          <p class="card-text">
+            <small class="text-muted">
+              <i class="fas fa-users"></i> Cast: {{ movie.cast }}
+            </small>
+          </p>
+        </div>
+        <div class="card-footer bg-white border-top-0">
+          <a href="{% url 'theater_list' movie.id %}" class="btn btn-outline-primary btn-block">
+            View Theaters <i class="fas fa-chevron-right ml-2"></i>
+          </a>
+        </div>
+      </div>
+    </swiper-slide>
+    {% endfor %}
+  </swiper-container>
+
+  <!-- Pagination -->
+  <div class="pagination justify-content-center mt-4">
+    {% if movies.has_previous %}
+      <a class="btn btn-outline-primary" href="?page=1">First</a>
+      <a class="btn btn-outline-primary" href="?page={{ movies.previous_page_number }}">Previous</a>
+    {% endif %}
+    <span class="btn btn-primary disabled">Page {{ movies.number }} of {{ movies.paginator.num_pages }}</span>
+    {% if movies.has_next %}
+      <a class="btn btn-outline-primary" href="?page={{ movies.next_page_number }}">Next</a>
+      <a class="btn btn-outline-primary" href="?page={{ movies.paginator.num_pages }}">Last</a>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Swiper JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-element-bundle.min.js"></script>
+>>>>>>> 03122cab3873c35578d0af7c4f502fa524c3987a
+
+<!-- Swiper Initialization -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var swiper = new Swiper("#movieSwiper", {
+      slidesPerView: 4,
+      spaceBetween: 20,
+      pagination: {
+        el: ".swiper-pagination",
+        clickable: true,
+        dynamicBullets: true,
+      },
+      navigation: {
+        nextEl: ".swiper-button-next",
+        prevEl: ".swiper-button-prev",
+      },
+      breakpoints: {
+        1024: { slidesPerView: 4 },
+        768: { slidesPerView: 2 },
+        480: { slidesPerView: 1 },
+      },
+    });
+  });
+</script>
+
+<style>
+  .swiper {
+    width: 90%;
+    height: auto;
+    margin: 20px auto;
+    padding-bottom: 50px;
+  }
+
+  .swiper-slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .card {
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    width: 100%;
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+  }
+  .pagination .btn {
+    margin: 5px;
+  }
+</style>
+<<<<<<< HEAD
+
+=======
+>>>>>>> 03122cab3873c35578d0af7c4f502fa524c3987a
+{% endblock %}
