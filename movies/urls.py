@@ -5,3 +5,5 @@ urlpatterns=[
     path('<int:movie_id>/theaters',views.theater_list,name='theater_list'),
     path('theater/<int:theater_id>/seats/book/',views.book_seats,name='book_seats'),
 ]
+
+
