@@ -1,0 +1,18 @@
+{% extends "users/basic.html" %}
+{% block content %}
+  <div class="container mt-5">
+    <div class="alert alert-success">
+      <h4 class="alert-heading">Booking Successful!</h4>
+      <p>Thank you for booking your seats for {{ theater.movie.name }}. A confirmation email has been sent to {{ user.email }}.</p>
+      <p><strong>Seats Booked:</strong> 
+        {% for seat_id in selected_seats %}
+          {{ seat_id }} 
+        {% endfor %}
+      </p>
+      <p><strong>Theater:</strong> {{ theater.name }}</p>
+      <p><strong>Movie Time:</strong> {{ theater.time }}</p>
+      <hr>
+      <p>See you at the theater!</p>
+    </div>
+  </div>
+{% endblock %}
