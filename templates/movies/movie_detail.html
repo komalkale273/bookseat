@@ -121,8 +121,7 @@
         <h1>{{ movie.title }}</h1>
         <p><strong>Genre:</strong> {{ movie.genre }}</p>
         <p><strong>Release Date:</strong> {{ movie.release_date }}</p>
-        <p><strong>Duration:</strong> {{ movie.duration }} mins</p>
-
+        
         <!-- YouTube Trailer -->
         {% if embed_url %}
             <div class="trailer-container">
@@ -136,26 +135,7 @@
         </div>
     </div>
 
-    <!-- Theater List -->
-    <div class="theater-section">
-        <h2>Available Theaters</h2>
-        {% if theaters %}
-            <ul class="theater-list">
-                {% for theater in theaters %}
-                    <li class="theater-item">
-                        <div>
-                            <h3>{{ theater.name }}</h3>
-                            <p><strong>Location:</strong> {{ theater.location }}</p>
-                            <p><strong>Seats Available:</strong> {{ theater.total_seats }}</p>
-                        </div>
-                        <a href="{% url 'book_seats' theater.id %}" class="btn book-btn">Book Now</a>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>No theaters available for this movie.</p>
-        {% endif %}
-    </div>
+    
 
 </body>
 </html>
