@@ -1,12 +1,20 @@
 from django.contrib import admin
+from django.utils.safestring import mark_safe
 from .models import Movie, Theater, Seat, Booking
 
 @admin.register(Movie)
 class MovieAdmin(admin.ModelAdmin):
-    list_display = ['name', 'rating', 'cast', 'description', 'release_date', 'trailer_url']
+    list_display = ['name', 'rating', 'release_date', 'trailer_embed']
     search_fields = ['name', 'cast']
     list_filter = ['release_date', 'rating']
     ordering = ['release_date']
+
+    def trailer_embed(self, obj):
+        if obj.trailer_url:
+            return mark_safe(f'<a href="{obj.trailer_url}" target="_blank">Watch Trailer</a>')
+        return "No Trailer"
+    
+    trailer_embed.short_description = "Trailer"
 
 @admin.register(Theater)
 class TheaterAdmin(admin.ModelAdmin):

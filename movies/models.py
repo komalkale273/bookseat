@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User 
 from django.utils.timezone import now
+from urllib.parse import urlparse, parse_qs  # ✅ Import required modules
+import re
+
 
 class Movie(models.Model):
     name = models.CharField(max_length=255, unique=True)  # Ensure unique movie names
@@ -11,14 +14,20 @@ class Movie(models.Model):
     cast = models.TextField(blank=True, null=True)
     trailer_url = models.URLField(blank=True, null=True)  # YouTube trailer URL
 
+    
+    
     def get_embed_url(self):
-        """Convert YouTube URL to an embeddable link"""
-        if self.trailer_url:
-            if "youtube.com/watch?v=" in self.trailer_url:
-                return self.trailer_url.replace("watch?v=", "embed/")
-            elif "youtu.be/" in self.trailer_url:
-                return self.trailer_url.replace("youtu.be/", "www.youtube.com/embed/")
-        return self.trailer_url  # Return original URL if format is different
+        """Extracts the YouTube video ID and returns an embed URL."""
+        if not self.trailer_url:
+            return None  # If no URL is provided, return None
+
+        # Try extracting video ID from different YouTube URL formats
+        match = re.search(r"(?:v=|\/)([0-9A-Za-z_-]{11})", self.trailer_url)
+        if match:
+            video_id = match.group(1)
+            return f"https://www.youtube.com/embed/{video_id}"
+        
+        return None  # Return None if no valid ID is found
 
     def __str__(self):
         return self.name
@@ -48,4 +57,3 @@ class Booking(models.Model):
 
     def __str__(self):
         return f'Booking by {self.user.username} for {self.seat.seat_number} at {self.theater.name}'
-

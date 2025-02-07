@@ -8,6 +8,8 @@ from django.http import JsonResponse
 from django.core.mail import send_mail
 from django.conf import settings
 from django.core.paginator import Paginator
+from urllib.parse import urlparse, parse_qs
+
 
 
 
@@ -122,4 +124,24 @@ def send_booking_confirmation_email(user, theater, selected_seats):
         fail_silently=False,
     )
 
+from django.shortcuts import render, get_object_or_404
+from .models import Movie
 
+from django.shortcuts import render, get_object_or_404
+from .models import Movie
+import re
+
+def movie_detail(request, movie_id):
+    movie = get_object_or_404(Movie, id=movie_id)
+
+    # Extract video ID from various YouTube URL formats
+    video_id = None
+    if movie.trailer_url:
+        # Match standard YouTube links
+        match = re.search(r"(?:v=|youtu\.be/)([\w-]+)", movie.trailer_url)
+        if match:
+            video_id = match.group(1)
+
+    embed_url = f"https://www.youtube.com/embed/{video_id}" if video_id else None
+
+    return render(request, "movies/movie_detail.html", {"movie": movie, "embed_url": embed_url})

@@ -182,10 +182,37 @@ swiper-slide img {
               alt="{{ movie.name }}"
               style="height: 300px; object-fit: cover"
             />
-            <div class="card-body d-flex flex-column justify-content-between">
+            {% comment %} <div class="card-body d-flex flex-column justify-content-between">
               <h5 class="card-title text-center">{{ movie.name }}</h5>
-              <p class="card-text text-center">{{ movie.description }}</p>
+              <p class="card-text"><i class="fas fa-star text-warning"></i> {{ movie.rating }}</p>
+              
+            </div> {% endcomment %}
+            <div class="card-body text-center">
+              <div class="card-body text-center">
+          <!-- Movie Name with Link to Details Page -->
+          <h5 class="card-title">
+            <a href="{% url 'movie_detail' movie.id %}" class="text-dark text-decoration-none">
+              {{ movie.name }}
+            </a>
+          </h5>
+         
+        </div>
+        
+                
+                  <div class="card-footer bg-white border-top-0 text-center">
+                    <a href="{% url 'theater_list' movie.id %}" class="btn btn-outline-primary">View Theaters</a>
+
+                  </div>
+                  <div class="card-footer bg-white border-top-0 text-center">
+                  <a href="{% url 'movie_detail' movie.id %}" class="btn btn-outline-primary">View Details</a>
+                </div>
+
+                  
+                </a>
+              </h5>
+              <p class="card-text"><i class="fas fa-star text-warning"></i> {{ movie.rating }}</p>
             </div>
+            
           </div>
         </a>
     </swiper-slide>
