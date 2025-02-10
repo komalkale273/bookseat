@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'users',
     'movies',
+    'analytics',
 ]
 SITE_ID = 1  
 PAYMENT_HOST = "http://127.0.0.1:8000"
@@ -69,7 +70,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'bookmyseat.wsgi.application'
 
 
-
+ 
 
 DATABASES = {
     'default': dj_database_url.parse(

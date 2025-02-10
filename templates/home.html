@@ -63,6 +63,74 @@
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
   }
+  /* Ensure movie cards are properly spaced */
+.recommended-carousel .carousel-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px; /* Add spacing between movie cards */
+}
+
+/* Adjust movie card styling */
+.movie-card {
+    flex: 0 0 auto;
+    width: 90%; /* Make cards responsive */
+    max-width: 250px; /* Limit max width */
+    padding: 10px;
+    border-radius: 10px; /* Rounded corners */
+    text-align: center;
+}
+
+/* Ensure images scale properly */
+.movie-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+}
+
+/* Improve button spacing */
+.movie-card a {
+    display: block;
+    margin-top: 5px;
+    padding: 8px;
+    font-size: 14px;
+}
+
+/* Fix carousel navigation arrows */
+.carousel-control-prev, .carousel-control-next {
+    width: 10%;
+}
+
+/* Ensure only 2 movies are shown on small screens */
+@media (max-width: 768px) {
+    .recommended-carousel .carousel-item {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+    }
+    .movie-card {
+        width: 45%; /* Show 2 cards per slide */
+        max-width: 180px;
+    }
+    .movie-card a {
+        font-size: 12px;
+    }
+}
+
+/* Show only 1 movie per slide on extra small screens */
+@media (max-width: 480px) {
+    .movie-card {
+        width: 90%;
+        max-width: 200px;
+    }
+}
+
+
+  
+
+
+
 </style>
 
 <!-- Carousel Section -->

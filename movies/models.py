@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.utils.timezone import now
 from urllib.parse import urlparse, parse_qs  # ✅ Import required modules
 import re
+from django.utils.timezone import now 
 
 
 class Movie(models.Model):
@@ -49,11 +50,12 @@ class Seat(models.Model):
         return f'{self.seat_number} in {self.theater.name}'
 
 class Booking(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    seat = models.OneToOneField(Seat, on_delete=models.CASCADE)
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
-    theater = models.ForeignKey(Theater, on_delete=models.CASCADE)
+    user = models.ForeignKey("auth.User", on_delete=models.CASCADE)
+    seat = models.ForeignKey("Seat", on_delete=models.CASCADE)
+    movie = models.ForeignKey("Movie", on_delete=models.CASCADE)
+    theater = models.ForeignKey("Theater", on_delete=models.CASCADE)
     booked_at = models.DateTimeField(auto_now_add=True)
+    date = models.DateTimeField(default=now)  # ✅ Set default value
 
     def __str__(self):
-        return f'Booking by {self.user.username} for {self.seat.seat_number} at {self.theater.name}'
+        return f"{self.user} - {self.movie}"
