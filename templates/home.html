@@ -63,6 +63,16 @@
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
   }
+  @media (max-width: 768px) {
+    .card img {
+      height: 250px !important; /* Reduce image height for smaller screens */
+    }
+  }
+  @media (max-width: 480px) {
+    .card img {
+      height: 200px !important;
+    }
+  }
   
 
   
@@ -102,13 +112,25 @@
 
   <!-- Recommended Movies -->
   <div class="section-title text-center mb-4">Recommended Movies</div>
-  <swiper-container class="mySwiper" slides-per-view="4" space-between="10" pagination="true" pagination-clickable="true" navigation="true">
+  <swiper-container class="mySwiper" 
+  slides-per-view="4" 
+  space-between="10" 
+  pagination="true" 
+  pagination-clickable="true" 
+  navigation="true"
+  breakpoints='{
+    "320": { "slidesPerView": 1, "spaceBetween": 5 },
+    "480": { "slidesPerView": 2, "spaceBetween": 10 },
+    "768": { "slidesPerView": 3, "spaceBetween": 15 },
+    "1024": { "slidesPerView": 4, "spaceBetween": 20 } 
+  }'
+  style="width: 100%; max-width: 1200px; margin: auto;">
     {% if movies %}
       {% for movie in movies %}
       <swiper-slide>
         <a href="{% url 'theater_list' movie.id %}" class="text-decoration-none">
           <div class="card h-100 shadow-sm">
-            <img src="{{ movie.image.url }}" class="card-img-top" alt="{{ movie.name }}" style="height: 300px; object-fit: cover">
+            <img src="{{ movie.image.url }}" class="card-img-top" alt="{{ movie.name }}" style="height: 300px; object-fit: cover; width: 100%;">
             <div class="card-body text-center">
               <h5 class="card-title">
                 <a href="{% url 'movie_detail' movie.id %}" class="text-dark text-decoration-none">{{ movie.name }}</a>

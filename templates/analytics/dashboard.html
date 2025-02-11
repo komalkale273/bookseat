@@ -3,64 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
+    <title>Analytics Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: Arial, sans-serif;
-        }
-        .dashboard-container {
-            max-width: 900px;
-            margin: 50px auto;
-            padding: 20px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        }
-        .metric-card {
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            color: white;
-        }
-        .metric-movies { background-color: #007bff; }
-        .metric-theaters { background-color: #28a745; }
-        .metric-seats { background-color: #ffc107; color: black; }
-        .metric-bookings { background-color: #dc3545; }
-    </style>
 </head>
-<body>
-    <div class="dashboard-container">
-        <h2 class="text-center mb-4">📊 Admin Dashboard</h2>
+<body class="bg-light">
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">Analytics Dashboard</h2>
+        
         <div class="row">
-            <div class="col-md-6">
-                <div class="metric-card metric-movies">
-                    <h4>🎬 Total Movies</h4>
-                    <h2>{{ total_movies }}</h2>
+            <div class="col-md-4">
+                <div class="card text-white bg-primary mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Bookings</h5>
+                        <p class="card-text fs-3">{{ total_bookings }}</p>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="metric-card metric-theaters">
-                    <h4>🏛️ Total Theaters</h4>
-                    <h2>{{ total_theaters }}</h2>
+
+            <div class="col-md-4">
+                <div class="card text-white bg-success mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Revenue</h5>
+                        <p class="card-text fs-3">₹{{ total_revenue }}</p>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-6 mt-3">
-                <div class="metric-card metric-seats">
-                    <h4>💺 Total Seats</h4>
-                    <h2>{{ total_seats }}</h2>
-                </div>
-            </div>
-            <div class="col-md-6 mt-3">
-                <div class="metric-card metric-bookings">
-                    <h4>📅 Total Bookings</h4>
-                    <h2>{{ total_bookings }}</h2>
+
+            <div class="col-md-4">
+                <div class="card text-white bg-danger mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Seats Booked</h5>
+                        <p class="card-text fs-3">{{ seats_booked }}</p>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="text-center mt-4">
-            <a href="/admin/" class="btn btn-primary">🔙 Back to Admin Panel</a>
+
+        <div class="card mt-4">
+            <div class="card-header bg-dark text-white">
+                <h5>Recent Bookings</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Movie</th>
+                            <th>Seats</th>
+                            <th>Amount</th>
+                            <th>Booked At</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for booking in recent_bookings %}
+                        <tr>
+                            <td>{{ booking.user.username }}</td>
+                            <td>{{ booking.movie.title }}</td>
+                            <td>{{ booking.seat.seat_number }}</td>
+                            <td>₹{{ booking.amount }}</td>
+                            <td>{{ booking.booked_at }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </body>

@@ -56,6 +56,6 @@ class Booking(models.Model):
     theater = models.ForeignKey("Theater", on_delete=models.CASCADE)
     booked_at = models.DateTimeField(auto_now_add=True)
     date = models.DateTimeField(default=now)  # ✅ Set default value
-
+    amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     def __str__(self):
         return f"{self.user} - {self.movie}"
