@@ -1,6 +1,6 @@
-from django.shortcuts import render  # ✅ Fix: Import render
-from django.db.models import Count, Sum  # ✅ Fix: Import Count & Sum for aggregations
-from movies.models import Booking, Movie  # ✅ Fix: Import your models
+from django.shortcuts import render 
+from django.db.models import Count, Sum  
+from movies.models import Booking, Movie 
 
 def admin_dashboard(request):
     total_bookings = Booking.objects.count()
@@ -19,4 +19,4 @@ def admin_dashboard(request):
         "popular_movie": popular_movie or {"title": "No Data", "bookings": 0}
     }
 
-    return render(request, "analytics/dashboard.html", context)  # ✅ Fix: Now render is properly imported
+    return render(request, "analytics/dashboard.html", context) 
