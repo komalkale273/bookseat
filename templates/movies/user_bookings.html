@@ -1,0 +1,51 @@
+{% extends "users/basic.html" %}
+
+{% block title %}My Bookings{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">🎟️ My Bookings</h2>
+
+    {% if bookings %}
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover text-center">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Movie</th>
+                        <th>Theater</th>
+                        <th>Seats</th>
+                        <th>Show Time</th>
+                        <th>Amount Paid</th>
+                        <th>Booking Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in bookings %}
+                        <tr>
+                            <td><strong>{{ booking.movie.name }}</strong></td>
+                            <td>{{ booking.theater.name }}</td>
+                            <td>
+                                {% for seat in booking.seats.all %}
+                                    <span class="badge bg-primary">{{ seat.seat_number }}</span>
+                                {% endfor %}
+                            </td>
+                            <td>{{ booking.show_time|default:"Not Available" }}</td>
+                            <td>₹{{ booking.amount|floatformat:2 }}</td>
+                            <td>{{ booking.created_at|date:"F d, Y H:i" }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center">
+            <h5>😔 No bookings yet.</h5>
+            <p>Start exploring the latest movies and grab your seats now!</p>
+        </div>
+    {% endif %}
+
+    <div class="text-center mt-4">
+        <a href="{% url 'movie_list' %}" class="btn btn-primary">🎥 Browse Movies</a>
+    </div>
+</div>
+{% endblock %}

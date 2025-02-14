@@ -1,18 +1,47 @@
 {% extends "users/basic.html" %}
+
+{% block title %}Booking Confirmation{% endblock %}
+
 {% block content %}
-  <div class="container mt-5">
-    <div class="alert alert-success">
-      <h4 class="alert-heading">Booking Successful!</h4>
-      <p>Thank you for booking your seats for {{ theater.movie.name }}. A confirmation email has been sent to {{ user.email }}.</p>
-      <p><strong>Seats Booked:</strong> 
-        {% for seat_id in selected_seats %}
-          {{ seat_id }} 
-        {% endfor %}
-      </p>
-      <p><strong>Theater:</strong> {{ theater.name }}</p>
-      <p><strong>Movie Time:</strong> {{ theater.time }}</p>
-      <hr>
-      <p>See you at the theater!</p>
+<div class="container mt-5">
+    <div class="card shadow-lg">
+        <div class="card-body text-center">
+            <h4 class="card-title text-success">🎉 Booking Confirmed!</h4>
+
+            {% if theater and theater.movie %}
+                <p class="fw-bold">You have successfully booked tickets for <strong>{{ theater.movie.name }}</strong>.</p>
+            {% else %}
+                <p class="text-danger">Movie information is unavailable.</p>
+            {% endif %}
+
+            <hr>
+
+            <p><strong>Seats Booked:</strong> 
+                {% if selected_seats %}
+                    {% for seat_id in selected_seats %}
+                        <span class="badge bg-primary">{{ seat_id }}</span>
+                    {% endfor %}
+                {% else %}
+                    <span class="text-danger">No seats selected</span>
+                {% endif %}
+            </p>
+
+            <p><strong>Theater:</strong> {{ theater.name|default:"Information not available" }}</p>
+
+            <p><strong>Show Time:</strong> 
+                {{ theater.time|default:"Show time not available" }}
+            </p>
+
+            <p><strong>Total Amount Paid:</strong> ₹{{ amount_paid|floatformat:2 }}</p>
+
+            <p class="text-muted">A confirmation email has been sent to <strong>{{ user.email }}</strong>.</p>
+
+            <hr>
+            <p class="text-muted">See you at the theater! 🎬</p>
+
+            <a href="{% url 'home' %}" class="btn btn-primary mt-3">🏠 Back to Home</a>
+            <a href="{% url 'user_bookings' %}" class="btn btn-success">📜 View My Bookings</a>
+        </div>
     </div>
-  </div>
+</div>
 {% endblock %}

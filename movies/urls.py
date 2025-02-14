@@ -1,3 +1,4 @@
+
 from django.urls import path
 from . import views
 urlpatterns=[
@@ -5,5 +6,6 @@ urlpatterns=[
     path('<int:movie_id>/theaters',views.theater_list,name='theater_list'),
     path('theater/<int:theater_id>/seats/book/',views.book_seats,name='book_seats'),
     path('movies/<int:movie_id>/', views.movie_detail, name='movie_detail'),
+    path('my-bookings/', views.my_bookings, name='user_bookings'),
 ]
 

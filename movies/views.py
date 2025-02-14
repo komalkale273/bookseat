@@ -1,20 +1,18 @@
-
 from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Movie, Theater, Seat, Booking
 from django.contrib.auth.decorators import login_required
-from django.db import IntegrityError, transaction
+from django.db import transaction
 from django.http import JsonResponse
 from django.core.mail import send_mail
-from django.conf import settings
 from django.core.paginator import Paginator
 from urllib.parse import urlparse, parse_qs
+import re
 
-
-
+from .models import Movie, Theater, Seat, Booking
 
 
 def movie_list(request):
+    """ View to list movies with search and pagination. """
     search_query = request.GET.get('search', '')
     movies = Movie.objects.all()
 
@@ -22,13 +20,15 @@ def movie_list(request):
         movies = movies.filter(name__icontains=search_query)
 
     # Pagination: Show 4 movies per page
-    paginator = Paginator(movies, 4)  
+    paginator = Paginator(movies, 4)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
     return render(request, "movies/movie_list.html", {"movies": page_obj})
 
+
 def theater_list(request, movie_id):
+    """ View to list theaters for a selected movie. """
     movie = get_object_or_404(Movie, id=movie_id)
     theaters = Theater.objects.filter(movie=movie)
     return render(request, 'movies/theater_list.html', {'movie': movie, 'theaters': theaters})
@@ -50,6 +50,8 @@ def book_seats(request, theater_id):
 
         try:
             with transaction.atomic():
+                total_price = 0
+
                 for seat_id in selected_seats:
                     seat = get_object_or_404(Seat, id=seat_id, theater=theater)
 
@@ -57,28 +59,32 @@ def book_seats(request, theater_id):
                         error_seats.append(seat.seat_number)
                         continue
 
-                    # Create booking record
+                    # ✅ Create booking record with dynamic pricing
                     booking = Booking.objects.create(
                         user=request.user,
                         seat=seat,
                         movie=theater.movie,
                         theater=theater
                     )
+                    booking.amount = booking.calculate_dynamic_price()
+                    booking.save()
 
                     seat.is_booked = True
                     seat.save()
+                    total_price += booking.amount
 
-                    # Send confirmation email to the user
-                    send_mail(
-                        subject=f"Booking Confirmation - {theater.movie.name}",
-                        message=f"Dear {request.user.username},\n\n"
-                                f"Your booking for {theater.movie.name} at {theater.name} is confirmed.\n"
-                                f"Seats Booked: {', '.join([seat.seat_number for seat in Seat.objects.filter(id__in=selected_seats)])}\n\n"
-                                f"Thank you for booking with us!",
-                        from_email=settings.EMAIL_HOST_USER,
-                        recipient_list=[request.user.email],  # Sends to the user who booked
-                        fail_silently=False
-                    )
+                # ✅ Send confirmation email with dynamic price
+                send_mail(
+                    subject=f"Booking Confirmation - {theater.movie.name}",
+                    message=f"Dear {request.user.username},\n\n"
+                            f"Your booking for {theater.movie.name} at {theater.name} is confirmed.\n"
+                            f"Seats Booked: {', '.join([seat.seat_number for seat in Seat.objects.filter(id__in=selected_seats)])}\n"
+                            f"Total Amount Paid: ₹{total_price}\n\n"
+                            f"Thank you for booking with us!",
+                    from_email=settings.EMAIL_HOST_USER,
+                    recipient_list=[request.user.email],
+                    fail_silently=False
+                )
 
         except Exception as e:
             print(f"Error during booking: {e}")
@@ -92,56 +98,64 @@ def book_seats(request, theater_id):
                 'error': f"The following seats are already booked: {', '.join(error_seats)}"
             })
 
-        # Redirect to confirmation page
         return render(request, 'movies/confirmation.html', {
             'theater': theater,
             'selected_seats': selected_seats,
+            'total_price': total_price,
             'user': request.user
         })
 
     return render(request, 'movies/seat_selection.html', {
         'theater': theater, 'seats': seats
     })
-def send_booking_confirmation_email(user, theater, selected_seats):
-    # Generate the seat numbers and details
-    seat_numbers = [Seat.objects.get(id=seat_id).seat_number for seat_id in selected_seats]
-    seat_details = ", ".join(seat_numbers)
 
-    # Prepare email content
-    subject = f"Your Movie Seat Booking Confirmation: {theater.movie.name} at {theater.name}"
-    message = f"Dear {user.username},\n\n"
-    message += f"Thank you for booking seats for {theater.movie.name} at {theater.name}. Here are your seat details:\n"
-    message += f"Seats: {seat_details}\n\n"
-    message += "We look forward to seeing you at the theater.\n\n"
-    message += "Best regards,\nThe Movie Booking Team"
+def send_booking_confirmation_email(user, theater, seat_numbers, amount):
+    """ Sends booking confirmation email to the user. """
+    subject = f"Booking Confirmation - {theater.movie.name}"
+    message = f"Dear {user.username},\n\n" \
+              f"Your booking for {theater.movie.name} at {theater.name} is confirmed.\n" \
+              f"Seats Booked: {', '.join(seat_numbers)}\n" \
+              f"Amount Paid: ₹{amount}\n\n" \
+              f"Thank you for booking with us!"
 
-    # Send the email
     send_mail(
-        subject,
-        message,
-        settings.DEFAULT_FROM_EMAIL,
-        [user.email],
-        fail_silently=False,
+        subject=subject,
+        message=message,
+        from_email=settings.EMAIL_HOST_USER,
+        recipient_list=[user.email],
+        fail_silently=False
     )
 
-from django.shortcuts import render, get_object_or_404
-from .models import Movie
-
-from django.shortcuts import render, get_object_or_404
-from .models import Movie
-import re
 
 def movie_detail(request, movie_id):
+    """ View to display movie details including embedded trailer video. """
     movie = get_object_or_404(Movie, id=movie_id)
 
-    # Extract video ID from various YouTube URL formats
+    # Extract YouTube video ID from various formats
     video_id = None
     if movie.trailer_url:
-        # Match standard YouTube links
-        match = re.search(r"(?:v=|youtu\.be/)([\w-]+)", movie.trailer_url)
-        if match:
-            video_id = match.group(1)
+        parsed_url = urlparse(movie.trailer_url)
+        query_params = parse_qs(parsed_url.query)
+
+        if "v" in query_params:
+            video_id = query_params["v"][0]  # Extract video ID from URL
+        elif parsed_url.netloc in ["youtu.be", "www.youtu.be"]:
+            video_id = parsed_url.path[1:]  # Extract from shortened URL format
 
     embed_url = f"https://www.youtube.com/embed/{video_id}" if video_id else None
 
     return render(request, "movies/movie_detail.html", {"movie": movie, "embed_url": embed_url})
+
+
+@login_required(login_url='/login/')
+def my_bookings(request):  # <- If this exists instead of `user_bookings`
+    bookings = Booking.objects.filter(user=request.user)
+    return render(request, 'movies/user_bookings.html', {'bookings': bookings})
+def booking_success(request, booking_id):
+    booking = get_object_or_404(Booking, id=booking_id, user=request.user)
+    
+    context = {
+        'theater': booking.theater if booking.theater else None,
+        'selected_seats': booking.seats.all() if booking.seats.exists() else [],
+    }
+    return render(request, 'movies/booking_success.html', context)
