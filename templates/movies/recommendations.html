@@ -1,0 +1,33 @@
+{% extends "users/basic.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">🎬 Movie Recommendations for You</h2>
+
+    {% if movies %}
+        <div class="row">
+            {% for movie in movies %}
+                <div class="col-md-4 mb-4">
+                    <div class="card shadow-sm">
+                        {% if movie.image %}
+                            <img src="{{ movie.image.url }}" class="card-img-top" alt="{{ movie.name }}">
+                        {% else %}
+                            <img src="https://via.placeholder.com/300x200?text=No+Image" class="card-img-top" alt="No Image">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ movie.name }}</h5>
+                            <p class="card-text">{{ movie.description|truncatechars:100 }}</p>
+                            <p><strong>⭐ Rating:</strong> {{ movie.rating }}</p>
+                            <a href="{% url 'movie_detail' movie.id %}" class="btn btn-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center">
+            No recommendations available yet. Book some movies to get suggestions!
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

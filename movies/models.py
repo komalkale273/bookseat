@@ -2,8 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User 
 import re
 from django.utils import timezone
-
-
+from django.db.models import Count
 from datetime import datetime
 
 
@@ -27,7 +26,25 @@ class Movie(models.Model):
     
     def __str__(self):
         return self.name
+def get_recommended_movies(user):
+    # Get the movies the user has booked
+    booked_movies = Movie.objects.filter(booking__user=user).distinct()
 
+    # If no booking history, recommend top-rated movies
+    if not booked_movies.exists():
+        return Movie.objects.order_by('-rating')[:5]
+
+    # Find movies with similar cast members
+    similar_movies = Movie.objects.filter(
+        cast__in=booked_movies.values_list('cast', flat=True)
+    ).exclude(id__in=booked_movies.values_list('id', flat=True)).distinct()
+
+    # If not enough recommendations, add popular movies
+    if similar_movies.count() < 5:
+        popular_movies = Movie.objects.annotate(bookings=Count('booking')).order_by('-bookings')[:5]
+        return (similar_movies | popular_movies)[:5]
+
+    return similar_movies[:5]
 class Theater(models.Model):
     name = models.CharField(max_length=255)
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='theaters')

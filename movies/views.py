@@ -7,6 +7,8 @@ from django.core.mail import send_mail
 from django.core.paginator import Paginator
 from urllib.parse import urlparse, parse_qs
 import re
+from .models import Movie, get_recommended_movies
+
 
 from .models import Movie, Theater, Seat, Booking
 
@@ -159,3 +161,16 @@ def booking_success(request, booking_id):
         'selected_seats': booking.seats.all() if booking.seats.exists() else [],
     }
     return render(request, 'movies/booking_success.html', context)
+
+
+@login_required
+def recommendations(request):
+    user = request.user
+
+    # Get the list of movies the user has booked
+    user_booked_movies = Booking.objects.filter(user=user).values_list('movie', flat=True).distinct()
+
+    # Recommend movies that the user has NOT booked yet
+    recommended_movies = Movie.objects.exclude(id__in=user_booked_movies).order_by('-rating')[:6]
+
+    return render(request, "movies/recommendations.html", {"movies": recommended_movies})
