@@ -1,6 +1,9 @@
 from django.shortcuts import render 
 from django.db.models import Count, Sum  
 from movies.models import Booking, Movie 
+from django.shortcuts import render, get_object_or_404
+from movies.models import Booking, Seat
+
 
 def admin_dashboard(request):
     total_bookings = Booking.objects.count()
@@ -20,3 +23,11 @@ def admin_dashboard(request):
     }
 
     return render(request, "analytics/dashboard.html", context) 
+
+def reserve_seat(request, seat_id):
+    seat = get_object_or_404(Seat, id=seat_id)
+    return render(request, "analytics/reserve_seat.html", {"seat": seat})
+
+def complete_booking(request, seat_id):
+    seat = get_object_or_404(Seat, id=seat_id)
+    return render(request, "analytics/complete_booking.html", {"seat": seat})

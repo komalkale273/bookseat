@@ -1,0 +1,40 @@
+{% extends "users/basic.html" %}
+{% block content %}
+<h2>Confirm Payment</h2>
+<p>Movie: {{ theater.movie.name }}</p>
+<p>Theater: {{ theater.name }}</p>
+<p>Selected Seats: {{ selected_seats }}</p>
+<p>Total Price: ₹{{ total_price }}</p>
+
+<!-- Timer Display -->
+<p>Time Left to Complete Payment: <span id="countdown-timer">5:00</span></p>
+
+<form action="{% url 'book_seats' theater.id %}" method="post">
+    {% csrf_token %}
+    {{ form.render }}
+</form>
+
+<script>
+    function startCountdown(duration, display) {
+        let timer = duration, minutes, seconds;
+        let countdownInterval = setInterval(function () {
+            minutes = Math.floor(timer / 60);
+            seconds = timer % 60;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+            display.textContent = minutes + ":" + seconds;
+
+            if (--timer < 0) {
+                clearInterval(countdownInterval);
+                display.textContent = "Time Expired!";
+            }
+        }, 1000);
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        let display = document.getElementById("countdown-timer");
+        startCountdown(300, display); // 5 minutes (300 seconds)
+    });
+</script>
+
+
+{% endblock content %}

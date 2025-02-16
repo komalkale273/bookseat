@@ -1,6 +1,9 @@
 from pathlib import Path
 import os
 import dj_database_url 
+# import paypalrestsdk
+
+
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
@@ -30,6 +33,7 @@ INSTALLED_APPS = [
     'users',
     'movies',
     'analytics',
+    'paypal.standard.ipn',
 ]
 SITE_ID = 1  
 PAYMENT_HOST = "http://127.0.0.1:8000"
@@ -138,3 +142,9 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'komalkale157@gmail.com'
 EMAIL_HOST_PASSWORD = 'zgon jjwy buls eaxf'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+# PayPal Settings for django-paypal
+PAYPAL_RECEIVER_EMAIL = 'sb-algki32074342@business.example.com'
+PAYPAL_TEST = True  # Set to False in production
+PAYPAL_RETURN_URL = "http://127.0.0.1:8000/payment_success/"
+PAYPAL_CANCEL_URL = "http://127.0.0.1:8000/payment_cancel/"

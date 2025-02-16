@@ -1,0 +1,10 @@
+{% extends "users/basic.html" %}
+
+{% block content %}
+    <h2>Booking Successful!</h2>
+    <p>Thank you for your booking, {{ request.user.username }}!</p>
+    <p>Theater: {{ theater.name }}</p>
+    <p>Seats: {{ selected_seats|join:", " }}</p>
+    <p>Your payment was successful.</p>
+    <a href="{% url 'movie_list' %}">Go Back to Movies</a>
+{% endblock %}

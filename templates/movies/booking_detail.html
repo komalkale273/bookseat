@@ -1,0 +1,5 @@
+{% if not booking.is_paid %}
+    <a href="{% url 'create_payment' booking.id %}" class="btn btn-success">Pay with PayPal</a>
+{% else %}
+    <p style="color: green;">Payment Completed ✅</p>
+{% endif %}

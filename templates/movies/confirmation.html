@@ -1,47 +1,18 @@
 {% extends "users/basic.html" %}
-
-{% block title %}Booking Confirmation{% endblock %}
-
 {% block content %}
-<div class="container mt-5">
-    <div class="card shadow-lg">
-        <div class="card-body text-center">
-            <h4 class="card-title text-success">🎉 Booking Confirmed!</h4>
+    <h2>Booking Confirmation</h2>
+    
+    <p><strong>Seats Booked:</strong> 
+        {% if selected_seats %}
+            {{ selected_seats|join:", " }}
+        {% else %}
+            No seats selected
+        {% endif %}
+    </p>
 
-            {% if theater and theater.movie %}
-                <p class="fw-bold">You have successfully booked tickets for <strong>{{ theater.movie.name }}</strong>.</p>
-            {% else %}
-                <p class="text-danger">Movie information is unavailable.</p>
-            {% endif %}
+    <p><strong>Theater:</strong> {{ theater.name }}</p>
+    <p><strong>Show Time:</strong> 7 p.m.</p>
+    <p><strong>Total Amount Paid:</strong> ₹{{ total_price }}</p>
+    <p>A confirmation email has been sent to {{ email }}.</p>
 
-            <hr>
-
-            <p><strong>Seats Booked:</strong> 
-                {% if selected_seats %}
-                    {% for seat_id in selected_seats %}
-                        <span class="badge bg-primary">{{ seat_id }}</span>
-                    {% endfor %}
-                {% else %}
-                    <span class="text-danger">No seats selected</span>
-                {% endif %}
-            </p>
-
-            <p><strong>Theater:</strong> {{ theater.name|default:"Information not available" }}</p>
-
-            <p><strong>Show Time:</strong> 
-                {{ theater.time|default:"Show time not available" }}
-            </p>
-
-            <p><strong>Total Amount Paid:</strong> ₹{{ amount_paid|floatformat:2 }}</p>
-
-            <p class="text-muted">A confirmation email has been sent to <strong>{{ user.email }}</strong>.</p>
-
-            <hr>
-            <p class="text-muted">See you at the theater! 🎬</p>
-
-            <a href="{% url 'home' %}" class="btn btn-primary mt-3">🏠 Back to Home</a>
-            <a href="{% url 'user_bookings' %}" class="btn btn-success">📜 View My Bookings</a>
-        </div>
-    </div>
-</div>
-{% endblock %}
+{% endblock content %}

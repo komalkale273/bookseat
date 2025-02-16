@@ -1,0 +1,32 @@
+{% for seat in seats %}
+    <div>
+        <p>Seat: {{ seat.seat_number }}</p>
+        <p>Reservation Expires In: <span id="timer-{{ seat.id }}"></span></p>
+    </div>
+
+    <script>
+        function startTimer(expiryTime, elementId) {
+            let countdownElement = document.getElementById(elementId);
+            let expiryTimestamp = new Date(expiryTime).getTime();
+            
+            function updateTimer() {
+                let now = new Date().getTime();
+                let remaining = expiryTimestamp - now;
+
+                if (remaining > 0) {
+                    let minutes = Math.floor(remaining / 60000);
+                    let seconds = Math.floor((remaining % 60000) / 1000);
+                    countdownElement.innerText = minutes + "m " + seconds + "s";
+                } else {
+                    countdownElement.innerText = "Expired";
+                }
+            }
+
+            updateTimer();
+            setInterval(updateTimer, 1000);
+        }
+
+        // Start countdown for this seat
+        startTimer("{{ seat.expiry_time|date:'c' }}", "timer-{{ seat.id }}");
+    </script>
+{% endfor %}
