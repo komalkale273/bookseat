@@ -9,7 +9,7 @@
 <!-- Timer Display -->
 <p>Time Left to Complete Payment: <span id="countdown-timer">5:00</span></p>
 
-<form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
+<form method="post" action="https://www.sandbox.paypal.com/cgi-bin/webscr">
     {% csrf_token %}
     {{ form.render }}
 </form>

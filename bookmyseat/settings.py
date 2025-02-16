@@ -1,9 +1,7 @@
 from pathlib import Path
 import os
 import dj_database_url 
-import pymysql
-pymysql.install_as_MySQLdb()
-
+# import paypalrestsdk
 
 
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")

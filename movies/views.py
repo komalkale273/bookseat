@@ -9,10 +9,10 @@ from django.utils.timezone import now, timedelta
 from django.urls import reverse
 from django.contrib import messages
 import uuid
-from urllib.parse import parse_qs,urlparse
 from django.utils import timezone
 from .models import Movie, Theater, Seat, Booking
 from paypal.standard.forms import PayPalPaymentsForm
+
 
 def movie_list(request):
     search_query = request.GET.get('search', '')
@@ -197,20 +197,13 @@ def payment_cancel(request):
 def payment_view(request, theater_id):
     theater = get_object_or_404(Theater, id=theater_id)
     selected_seats = Seat.objects.filter(is_reserved=True, theater=theater)
-    localtime = timezone.localtime(timezone.now())
 
     for seat in selected_seats:
         if seat.reserved_at:
-            seat.expiry_time = localtime + timedelta(minutes=5)  # Ensure proper timezone handling
+            seat.expiry_time = localtime(seat.reserved_at) + timedelta(minutes=5)  # Ensure proper timezone handling
     
     return render(request, "payment.html", {
         "theater": theater,
         "selected_seats": selected_seats,
     })
-@login_required
-def recommendations(request):
-    user = request.user
-    user_booked_movies = Booking.objects.filter(user=user).values_list('movie', flat=True).distinct()
-    recommended_movies = Movie.objects.exclude(id__in=user_booked_movies).order_by('-rating')[:6]
-    return render(request, "movies/recommendations.html", {"movies": recommended_movies})
 
