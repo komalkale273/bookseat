@@ -1,0 +1,77 @@
+{% extends "users/basic.html" %}
+
+{% block title %}Your Booking{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+      <div class="col-lg-8 mx-auto">
+        <div class="card shadow">
+          <div class="card-header bg-primary text-white text-center">
+            <h4><i class="fas fa-ticket-alt me-2"></i> Your Bookings</h4>
+          </div>
+          <div class="card-body">
+            {% if bookings %}
+            <div class="table-responsive">
+              <table class="table table-bordered text-center">
+                <thead class="table-light">
+                  <tr>
+                    <th>Movie</th>
+                    <th>Theater</th>
+                    <th>Seat</th>
+                    <th>Booking Date</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for booking in bookings %}
+                  <tr>
+                    <td><strong>{{ booking.movie.name|capfirst }}</strong></td>
+                    <td>{{ booking.theater|capfirst }}</td>
+                    <td>{{ booking.seat.seat_number }}</td>
+                    <td>{{ booking.booked_at|date:"F d, Y H:i" }}</td>
+                    <td>
+                      <span class="badge bg-success">Confirmed</span>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            {% else %}
+            <div class="text-center py-4">
+              <i class="fas fa-ticket-alt fa-4x text-muted mb-3"></i>
+              <p class="lead">No bookings yet. Time to plan your next movie night!</p>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Font Awesome Icons -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+  />
+  
+  <!-- Custom Styling -->
+  <style>
+    .card {
+      border-radius: 15px;
+      border: none;
+      transition: transform 0.3s ease-in-out;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+    }
+    .table {
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .badge {
+      font-size: 0.9rem;
+      padding: 5px 10px;
+    }
+  </style>
+  {% endblock %}

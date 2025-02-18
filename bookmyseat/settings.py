@@ -1,7 +1,7 @@
 from pathlib import Path
 import os
 import dj_database_url 
-# import paypalrestsdk
+from django.urls import reverse_lazy
 
 
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
@@ -34,7 +34,11 @@ INSTALLED_APPS = [
     'movies',
     'analytics',
     'paypal.standard.ipn',
+    'crispy_forms',
+    'crispy_bootstrap5',
 ]
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"  # Adjust based on your Bootstrap version
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 SITE_ID = 1  
 PAYMENT_HOST = "http://127.0.0.1:8000"
 MIDDLEWARE = [
@@ -134,17 +138,31 @@ STATIC_ROOT = os.path.join(BASE_DIR,'staticfiles')
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'  # Gmail SMTP server
-EMAIL_PORT = 587  # For TLS
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'komalkale157@gmail.com'
-EMAIL_HOST_PASSWORD = 'zgon jjwy buls eaxf'
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+# DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'  # Gmail SMTP server
+# EMAIL_PORT = 587  # For TLS
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = 'komalkale157@gmail.com'
+# EMAIL_HOST_PASSWORD = 'zgon jjwy buls eaxf'
+# DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # PayPal Settings for django-paypal
 PAYPAL_RECEIVER_EMAIL = 'sb-algki32074342@business.example.com'
 PAYPAL_TEST = True  # Set to False in production
 PAYPAL_RETURN_URL = "http://127.0.0.1:8000/payment_success/"
 PAYPAL_CANCEL_URL = "http://127.0.0.1:8000/payment_cancel/"
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# Email settings
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "komalkale157@gmail.com"
+EMAIL_HOST_PASSWORD = 'zgon jjwy buls eaxf'  # Ensure you use secure credentials
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+SITE_ID = 1
+
+
