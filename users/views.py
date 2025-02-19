@@ -16,15 +16,11 @@ from django.contrib.auth.views import PasswordResetView
 from django.core.exceptions import ValidationError
 from users.forms import UserRegisterForm, UserUpdateForm, ContactMessage, CustomPasswordChangeForm
 from movies.models import Movie, Booking
-# from users.utils import password_reset_email
+from users.utils import password_reset_email
 
-
-# Home View
 def home(request):
-    # Fetch recommended movies
-    recommended_movies = Movie.objects.filter(is_recommended=True)  # Assuming you have a field `is_recommended`
-    return render(request, 'home.html', {'movies': recommended_movies})
-
+    movies= Movie.objects.all()
+    return render(request,'home.html',{'movies':movies})
 # Custom Password Reset View
 class CustomPasswordResetView(PasswordResetView):
     template_name = "users/password_reset_form.html"

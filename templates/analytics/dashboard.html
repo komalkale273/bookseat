@@ -8,10 +8,11 @@
 </head>
 <body class="bg-light">
     <div class="container mt-5">
-        <h2 class="text-center mb-4">Analytics Dashboard</h2>
+        <h2 class="text-center mb-4">Admin Analytics Dashboard</h2>
         
+        <!-- Overview Cards -->
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="card text-white bg-primary mb-3">
                     <div class="card-body">
                         <h5 class="card-title">Total Bookings</h5>
@@ -19,8 +20,7 @@
                     </div>
                 </div>
             </div>
-
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="card text-white bg-success mb-3">
                     <div class="card-body">
                         <h5 class="card-title">Revenue</h5>
@@ -28,17 +28,82 @@
                     </div>
                 </div>
             </div>
-
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="card text-white bg-danger mb-3">
                     <div class="card-body">
                         <h5 class="card-title">Seats Booked</h5>
-                        <p class="card-text fs-3">{{ seats_booked }}</p>
+                        <p class="card-text fs-3">{{ total_seats }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-info mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Users</h5>
+                        <p class="card-text fs-3">{{ total_users }}</p>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- Popular Movies -->
+        <div class="card mt-4">
+            <div class="card-header bg-dark text-white">
+                <h5>Top 5 Popular Movies</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group">
+                    {% for movie in top_movies %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ movie.movie__name }}
+                        <span class="badge bg-primary rounded-pill">{{ movie.bookings }} Bookings</span>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item text-center text-muted">No data available</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- Busiest Theaters -->
+        <div class="card mt-4">
+            <div class="card-header bg-dark text-white">
+                <h5>Top 5 Busiest Theaters</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group">
+                    {% for theater in top_theaters %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ theater.theater__name }}
+                        <span class="badge bg-primary rounded-pill">{{ theater.bookings }} Bookings</span>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item text-center text-muted">No data available</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- Most Active Users -->
+        <div class="card mt-4">
+            <div class="card-header bg-dark text-white">
+                <h5>Most Active Users</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group">
+                    {% for user in active_users %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ user.user__username }}
+                        <span class="badge bg-success rounded-pill">{{ user.bookings }} Bookings</span>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item text-center text-muted">No data available</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- Recent Bookings -->
         <div class="card mt-4">
             <div class="card-header bg-dark text-white">
                 <h5>Recent Bookings</h5>
@@ -49,7 +114,6 @@
                         <tr>
                             <th>User</th>
                             <th>Movie</th>
-                            <th>Seats</th>
                             <th>Amount</th>
                             <th>Booked At</th>
                         </tr>
@@ -58,16 +122,20 @@
                         {% for booking in recent_bookings %}
                         <tr>
                             <td>{{ booking.user.username }}</td>
-                            <td>{{ booking.movie.title }}</td>
-                            <td>{{ booking.seat.seat_number }}</td>
-                            <td>₹{{ booking.amount }}</td>
-                            <td>{{ booking.booked_at }}</td>
+                            <td>{{ booking.movie.name }}</td>
+                            <td>₹{{ booking.total_price }}</td>
+                            <td>{{ booking.booked_at|date:"d M Y, H:i" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center text-muted">No recent bookings</td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
         </div>
+
     </div>
 </body>
 </html>

@@ -31,7 +31,7 @@ def movie_list(request):
 
 def theater_list(request, movie_id):
     movie = get_object_or_404(Movie, id=movie_id)
-    theaters = Theater.objects.filter(movie=movie)
+    theaters = Theater.objects.filter(movie_id=movie_id)
     return render(request, 'movies/theater_list.html', {'movie': movie, 'theaters': theaters})
 
 def movie_detail(request, movie_id):
@@ -56,16 +56,8 @@ def seat_selection(request, theater_id):
     release_expired_reservations()
     theater = get_object_or_404(Theater, id=theater_id)
     seats = Seat.objects.filter(theater=theater)
-  
-    seat_prices = {seat.id: Booking(user=request.user, seat=seat, movie=theater.movie, theater=theater).calculate_dynamic_price() for seat in seats}
-    for seat in seats:
-        seat_prices[seat.id] = Booking(user=request.user, seat=seat, movie=theater.movie, theater=theater).calculate_dynamic_price()
+    return render(request, 'movies/seat_selection.html', {'theater': theater, 'seats': seats})
 
-    return render(request, 'movies/seat_selection.html', {
-        'theater': theater,
-        'seats': seats,
-        'seat_prices': seat_prices
-    })
 @login_required
 def book_seats(request, theater_id):
     theater = get_object_or_404(Theater, id=theater_id)
@@ -75,8 +67,12 @@ def book_seats(request, theater_id):
         messages.error(request, "No seats selected. Please select at least one seat.")
         return redirect('seat_selection', theater_id=theater.id)
 
-    total_price = 0
-    booked_seats = []
+    seats = Seat.objects.filter(id__in=selected_seats)
+
+    # Calculate the total price based on the actual seat prices
+    total_price = sum(seat.price for seat in seats)
+
+    booked_seats = ', '.join(seat.seat_number for seat in seats)
 
     with transaction.atomic():
         for seat_id in selected_seats:
@@ -95,21 +91,14 @@ def book_seats(request, theater_id):
                 messages.error(request, f"Seat {seat.seat_number} is currently reserved. Try again later.")
                 return redirect('seat_selection', theater_id=theater.id)
 
-            # Calculate dynamic price per seat
-            dynamic_price = Booking(user=request.user, seat=seat, movie=theater.movie, theater=theater).calculate_dynamic_price()
-            total_price += dynamic_price
-
             # Reserve seat
             seat.is_reserved = True
             seat.reserved_at = now()
             seat.save()
 
-            booked_seats.append(seat.seat_number)
-
     # Store in session for further processing
     request.session['selected_seats'] = selected_seats
     request.session['theater_id'] = theater_id
-    request.session['total_price'] = total_price
 
     # PayPal Payment Process
     paypal_dict = {
@@ -136,7 +125,6 @@ def book_seats(request, theater_id):
 def payment_success(request):
     theater_id = request.session.get('theater_id')
     selected_seats = request.session.get('selected_seats', [])
-    total_price = request.session.get('total_price')
 
     if not theater_id or not selected_seats:
         messages.error(request, "Payment successful, but booking information is missing.")
@@ -159,25 +147,22 @@ def payment_success(request):
             seat.reserved_at = None
             seat.save()
 
-            # Create booking record with dynamic price
-            dynamic_price = Booking(user=request.user, seat=seat, movie=theater.movie, theater=theater).calculate_dynamic_price()
-
+            # Create booking record
             Booking.objects.create(
                 user=request.user,
                 movie=theater.movie,
                 theater=theater,
                 seat=seat,
-                amount=dynamic_price,
+                amount=seat.price,
                 is_paid=True
             )
 
     # Clear session data
     request.session.pop('selected_seats', None)
     request.session.pop('theater_id', None)
-    request.session.pop('total_price', None)
 
     # Send email confirmation
-    send_booking_confirmation_email(request.user, theater, selected_seats, total_price)
+    send_booking_confirmation_email(request.user, theater, selected_seats, len(selected_seats) * 500)
 
     messages.success(request, "Payment successful! Your booking is confirmed.")
     return render(request, "movies/booking_success.html", {"theater": theater, "selected_seats": selected_seats})
@@ -230,10 +215,31 @@ def payment_view(request, theater_id):
         "theater": theater,
         "selected_seats": selected_seats,
     })
+
+
 @login_required
 def recommendations(request):
     user = request.user
-    user_booked_movies = Booking.objects.filter(user=user).values_list('movie', flat=True).distinct()
-    recommended_movies = Movie.objects.exclude(id__in=user_booked_movies).order_by('-rating')[:6]
-    return render(request, "movies/recommendations.html", {"movies": recommended_movies})
 
+    # Get movies booked by the user
+    user_booked_movies = Booking.objects.filter(user=user).values_list('movie_id', flat=True)
+
+    # Get categories of the booked movies
+    user_booked_categories = (
+        Movie.objects.filter(id__in=user_booked_movies)
+        .values_list('category', flat=True)
+        .distinct()
+    )
+
+    # Recommend movies based on category preference, excluding already booked ones
+    if user_booked_categories:
+        recommended_movies = (
+            Movie.objects.filter(category__in=user_booked_categories)
+            .exclude(id__in=user_booked_movies)
+            .order_by('-rating')[:6]
+        )
+    else:
+        # Fallback: Show top-rated movies if no booking history
+        recommended_movies = Movie.objects.all().order_by('-rating')[:6]
+
+    return render(request, "movies/recommendations.html", {"movies": recommended_movies})

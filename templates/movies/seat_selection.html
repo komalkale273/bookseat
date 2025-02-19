@@ -15,9 +15,9 @@
         
         <div style="display: flex; flex-wrap: wrap;">
             {% for seat in seats %}
-                <label style="margin: 5px; {% if seat.is_booked %}color: gray; text-decoration: line-through;{% endif %}">
+                <label style="margin: 5px; {% if seat.is_booked %} color: gray; text-decoration: line-through;{% endif %}">
                     <input type="checkbox" name="seats" value="{{ seat.id }}" {% if seat.is_booked %}disabled{% endif %}>
-                    Seat {{ seat.seat_number }} - ₹500 {% if seat.is_booked %}(Booked){% endif %}
+                    Seat {{ seat.seat_number }}  {{seat.price}} {% if seat.is_booked %}(Booked){% endif %}
                 </label>
             {% endfor %}
         </div>

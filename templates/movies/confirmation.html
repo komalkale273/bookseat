@@ -11,8 +11,8 @@
     </p>
 
     <p><strong>Theater:</strong> {{ theater.name }}</p>
-    <p><strong>Show Time:</strong> 7 p.m.</p>
+    <p><strong>Show Time:</strong> {{ show_time }}</p>
     <p><strong>Total Amount Paid:</strong> ₹{{ total_price }}</p>
-    <p>A confirmation email has been sent to {{ email }}.</p>
+    <p>A confirmation email has been sent to <strong>{{ email }}</strong>.</p>
 
 {% endblock content %}

@@ -10,6 +10,8 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+CURRENCY_SYMBOL = "₹"  # Change if needed
+CURRENCY_CODE = "INR"  # Change to "USD" if PayPal requires it
 
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'your-default-secret-key')

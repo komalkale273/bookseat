@@ -1,33 +1,42 @@
-from django.shortcuts import render 
-from django.db.models import Count, Sum  
-from movies.models import Booking, Movie 
-from django.shortcuts import render, get_object_or_404
-from movies.models import Booking, Seat
-
+from django.shortcuts import render
+from django.db.models import Count, Sum
+from .models import Booking
 
 def admin_dashboard(request):
     total_bookings = Booking.objects.count()
-    total_revenue = Booking.objects.aggregate(total=Sum('amount'))['total'] or 0
-    seats_booked = Booking.objects.count()
+    total_revenue = Booking.objects.aggregate(Sum('total_price'))['total_price__sum'] or 0
+    total_users = Booking.objects.values('user').distinct().count()
+    total_seats = Booking.objects.count()
 
-    recent_bookings = Booking.objects.select_related('user', 'movie', 'seat').order_by('-booked_at')[:10]
+    top_movies = (
+        Booking.objects.values('movie__name')
+        .annotate(bookings=Count('id'))
+        .order_by('-bookings')[:5]
+    )
 
-    popular_movie = Movie.objects.annotate(bookings=Count('booking')).order_by('-bookings').first()
+    top_theaters = (
+        Booking.objects.values('theater__name')
+        .annotate(bookings=Count('id'))
+        .order_by('-bookings')[:5]
+    )
+
+    active_users = (
+        Booking.objects.values('user__username')
+        .annotate(bookings=Count('id'))
+        .order_by('-bookings')[:5]
+    )
+
+    recent_bookings = Booking.objects.select_related('user', 'movie', 'theater').order_by('-booked_at')[:5]
 
     context = {
-        "total_bookings": total_bookings,
-        "total_revenue": total_revenue,
-        "seats_booked": seats_booked,
-        "recent_bookings": recent_bookings,
-        "popular_movie": popular_movie or {"title": "No Data", "bookings": 0}
+        'total_bookings': total_bookings,
+        'total_revenue': total_revenue,
+        'total_users': total_users,
+        'total_seats': total_seats,
+        'top_movies': top_movies,
+        'top_theaters': top_theaters,
+        'active_users': active_users,
+        'recent_bookings': recent_bookings,
     }
 
-    return render(request, "analytics/dashboard.html", context) 
-
-def reserve_seat(request, seat_id):
-    seat = get_object_or_404(Seat, id=seat_id)
-    return render(request, "analytics/reserve_seat.html", {"seat": seat})
-
-def complete_booking(request, seat_id):
-    seat = get_object_or_404(Seat, id=seat_id)
-    return render(request, "analytics/complete_booking.html", {"seat": seat})
+    return render(request, 'analytics/dashboard.html', context)
