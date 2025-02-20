@@ -39,6 +39,7 @@ class Movie(models.Model):
     genre = models.CharField(max_length=100, default="Unknown")
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default="Action")
     is_recommended = models.BooleanField(default=False)
+    cast=models.TextField(default="Bolleywood")
 
     def get_embed_url(self):
         if not self.trailer_url:
