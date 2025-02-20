@@ -32,6 +32,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    "django_browser_reload",
+    'theme',
+    'tailwind',
     'users',
     'movies',
     'analytics',
@@ -39,6 +42,11 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap5',
 ]
+TAILWIND_APP_NAME ='theme'
+INTERNAL_IPS=[
+    "127.0.0.1",
+]
+NPM_BIN_PATH = 'npm.cmd'
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"  # Adjust based on your Bootstrap version
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 SITE_ID = 1  
@@ -51,6 +59,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',  # This comes after SessionMiddleware
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_browser_reload.middleware.BrowserReloadMiddleware',
 ]
 
 AUTH_USER_MODEL='auth.User'

@@ -8,6 +8,7 @@ urlpatterns = [
     path('',include('users.urls')),
     path('movies/', include('movies.urls')),
     path("analytics/", include("analytics.urls")),
+    path("__reload__/",include("django_browser_reload.urls")),
 ]
 
 if settings.DEBUG:
