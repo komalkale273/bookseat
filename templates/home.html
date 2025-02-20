@@ -80,6 +80,8 @@ no
 
 
 </style>
+<div class="bg-red-500 text-white p-4">Tailwind is working!</div>
+
 
 <!-- Carousel Section -->
 <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
@@ -110,7 +112,7 @@ no
   </div>
   {% endif %}
 
-  <!-- Recommended Movies -->
+  <!-- Recommended Movies
   <div class="section-title text-center mb-4">Recommended Movies</div>
   <swiper-container class="mySwiper" 
   slides-per-view="4" 
@@ -145,7 +147,50 @@ no
       </swiper-slide>
       {% endfor %}
     {% endif %}
-  </swiper-container>
+  </swiper-container> -->
+  <div class="max-w-screen-lg mx-auto bg-gradient-to-r from-blue-100 to-purple-200 rounded-lg shadow-2xl overflow-hidden p-6">
+    <h2 class="text-2xl font-bold text-center text-gray-800 mb-4">Featured Movies</h2>
+    <swiper-container class="mySwiper" 
+        slides-per-view="4" 
+        space-between="15" 
+        pagination="true" 
+        pagination-clickable="true" 
+        navigation="true" 
+        breakpoints='{
+            "320": { "slidesPerView": 1, "spaceBetween": 5 },
+            "480": { "slidesPerView": 2, "spaceBetween": 10 },
+            "768": { "slidesPerView": 3, "spaceBetween": 10 },
+            "1024": { "slidesPerView": 4, "spaceBetween": 15 }
+        }'>
+        
+        {% if movies %}
+            {% for movie in movies %}
+            <swiper-slide>
+                <div class="card h-100 shadow-lg p-4 rounded-lg bg-white transition-transform transform hover:scale-105 duration-300 border border-gray-300">
+                    <img src="{{ movie.image.url }}" class="rounded-lg shadow-md" alt="{{ movie.name }}" style="height: 160px; object-fit: cover; width: 100%;">
+                    <div class="text-center mt-3">
+                        <h5 class="text-lg font-semibold text-gray-700">
+                            <a href="{% url 'movie_detail' movie.id %}" class="text-blue-600 hover:underline">{{ movie.name }}</a>
+                        </h5>
+                        <div class="flex justify-center gap-2 mt-3">
+                            
+                            <button class="bg-green-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-600 transition duration-300 shadow-md">
+                                <a href="{% url 'theater_list' movie.id %}">View Theater</a>
+                            </button>
+                            <button class="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-600 transition duration-300 shadow-md">
+                                <a href="{% url 'movie_detail' movie.id %}">View Trailer</a>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </swiper-slide>
+            {% endfor %}
+        {% endif %}
+    </swiper-container>
+</div>
+
+</div>
+
 
   <div class="section-title">The Best of Live Events</div>
   <div class="row">
