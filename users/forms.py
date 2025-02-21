@@ -1,9 +1,12 @@
 from django import forms
 from django.contrib.auth.models import User
 from .models import ContactMessage
-from django.contrib.auth.forms import SetPasswordForm, PasswordChangeForm, UserCreationForm
-from django.contrib.auth.forms import SetPasswordForm, PasswordChangeForm
-
+from django.contrib.auth.forms import SetPasswordForm,  UserCreationForm
+from django.contrib.auth.forms import SetPasswordForm
+from django.contrib.auth.forms import PasswordResetForm
+from django.contrib.auth.forms import SetPasswordForm
+from django.contrib.auth.forms import PasswordChangeForm
+from .models import FAQ
 # Base Form to apply styling to all fields
 class BaseForm(forms.Form):
     def __init__(self, *args, **kwargs):
@@ -46,28 +49,42 @@ class ContactForm(BaseForm, forms.ModelForm):
         fields = ['name', 'email', 'message', 'subject']
 
 
-class CustomSetPasswordForm(SetPasswordForm):
-    """
-    Custom password reset form that only includes new password fields.
-    """
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['new_password1'].widget.attrs.update({'class': 'form-control'})
-        self.fields['new_password2'].widget.attrs.update({'class': 'form-control'})
-
-class CustomPasswordChangeForm(PasswordChangeForm):
-    """
-    Custom form for changing password that includes old password verification.
-    """
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['old_password'].widget.attrs.update({'class': 'form-control'})
-        self.fields['new_password1'].widget.attrs.update({'class': 'form-control'})
-        self.fields['new_password2'].widget.attrs.update({'class': 'form-control'})
-
 
 # Profile Update Form
 class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['password']  # Optional, might be omitted if not needed
+class CustomPasswordResetForm(PasswordResetForm):
+    email = forms.EmailField(
+        label="Email",
+        max_length=254,
+        widget=forms.EmailInput(attrs={"class": "form-control", "placeholder": "Enter your email"})
+    )
+
+class CustomSetPasswordForm(SetPasswordForm):
+    new_password1 = forms.CharField(
+        label="New Password",
+        widget=forms.PasswordInput(attrs={"class": "form-control", "placeholder": "Enter new password"})
+    )
+    new_password2 = forms.CharField(
+        label="Confirm Password",
+        widget=forms.PasswordInput(attrs={"class": "form-control", "placeholder": "Confirm new password"})
+    )
+class CustomPasswordChangeForm(PasswordChangeForm):
+    old_password = forms.CharField(
+        label="Current Password",
+        widget=forms.PasswordInput(attrs={"class": "form-control", "placeholder": "Enter current password"})
+    )
+    new_password1 = forms.CharField(
+        label="New Password",
+        widget=forms.PasswordInput(attrs={"class": "form-control", "placeholder": "Enter new password"})
+    )
+    new_password2 = forms.CharField(
+        label="Confirm Password",
+        widget=forms.PasswordInput(attrs={"class": "form-control", "placeholder": "Confirm new password"})
+    )
+class FAQForm(forms.ModelForm):
+    class Meta:
+        model = FAQ
+        fields = ['question']

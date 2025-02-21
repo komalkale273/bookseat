@@ -1,0 +1,34 @@
+{% extends "users/basic.html" %} 
+{% block content %}
+{% load static %}
+
+
+
+
+
+    <div class="max-w-4xl mx-auto bg-gray-900 p-6 rounded-lg">
+        <div>
+            {% block title %}<h1 class="text-white">Frequently Asked Questions</h1>{% endblock %}
+
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {% for faq in faqs %}
+            <button class="faq-item flex justify-between items-center p-4 bg-purple-700 text-white rounded-lg hover:bg-purple-800 transition">
+                {{ faq.question }} <span>&#9662;</span>
+            </button>
+            {% endfor %}
+        </div>
+
+        <div class="text-center mt-6">
+            <form method="POST">
+                {% csrf_token %}
+                {{ form.question }}
+                <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-6 rounded-lg transition">
+                    Ask a Question
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+    {% endblock %}

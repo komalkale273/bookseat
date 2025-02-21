@@ -4,6 +4,8 @@ import dj_database_url
 from django.urls import reverse_lazy
 
 
+
+
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
@@ -174,6 +176,8 @@ EMAIL_HOST_USER = "komalkale157@gmail.com"
 EMAIL_HOST_PASSWORD = 'zgon jjwy buls eaxf'  # Ensure you use secure credentials
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-SITE_ID = 1
+SITE_ID = 10
+
+
 
 
