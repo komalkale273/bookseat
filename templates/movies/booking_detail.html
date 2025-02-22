@@ -1,5 +1,15 @@
-{% if not booking.is_paid %}
+<!-- {% if not booking.is_paid %}
     <a href="{% url 'create_payment' booking.id %}" class="btn btn-success">Pay with PayPal</a>
 {% else %}
     <p style="color: green;">Payment Completed ✅</p>
-{% endif %}
+{% endif %} -->
+<div class="bg-gray-900 text-white min-h-screen flex items-center justify-center relative">
+    <img alt="Background image with various movie posters" class="absolute inset-0 w-full h-full object-cover opacity-50" height="1080" src="https://storage.googleapis.com/a1aa/image/v8JDThOSg_NloqJocamj6huQ6hJr6MsI1JMJiBWgma8.jpg" width="1920"/>
+    <div class="relative bg-gray-800 bg-opacity-75 p-8 rounded-lg shadow-lg w-full max-w-md text-center">
+        {% if not booking.is_paid %}
+            <a href="{% url 'create_payment' booking.id %}" class="w-full bg-green-600 py-3 rounded-lg text-white font-bold hover:bg-green-700 mt-4 inline-block">Pay with PayPal</a>
+        {% else %}
+            <p class="text-green-500 font-bold">Payment Completed ✅</p>
+        {% endif %}
+    </div>
+</div>

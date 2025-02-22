@@ -16,9 +16,7 @@ from paypal.standard.forms import PayPalPaymentsForm
 from django.utils.timezone import localtime
 from urllib.parse import urlparse,parse_qs
 
-
 def movie_list(request):
-    """ View to list movies with search and pagination. """
     search_query = request.GET.get('search', '')
     movies = Movie.objects.all()
     if search_query:
@@ -44,13 +42,11 @@ def movie_detail(request, movie_id):
     embed_url = f"https://www.youtube.com/embed/{video_id}" if video_id else None
     return render(request, "movies/movie_detail.html", {"movie": movie, "embed_url": embed_url})
 
+
 def release_expired_reservations():
-    expired_time = now() - timedelta(minutes=5)
-    expired_seats = Seat.objects.filter(reserved_at__lt=timezone.now() - timedelta(minutes=5))
-    for seat in expired_seats:
-        seat.is_reserved = False
-        seat.reserved_until = None
-        seat.save()
+    expired_time = timezone.now() - timedelta(minutes=5)
+    expired_seats = Seat.objects.filter(reserved_at__lt=expired_time, is_reserved=True)
+    expired_seats.update(is_reserved=False, reserved_at=None)
 
 def seat_selection(request, theater_id):
     release_expired_reservations()
@@ -68,39 +64,34 @@ def book_seats(request, theater_id):
         return redirect('seat_selection', theater_id=theater.id)
 
     seats = Seat.objects.filter(id__in=selected_seats)
+    remaining_seats = Seat.objects.filter(theater=theater, is_booked=False).count()
+    showtime = theater.showtime
+    time_to_show = (showtime - timezone.now()).total_seconds() / 3600
+    base_price = 500
+    price_multiplier = 1.0
 
-    # Calculate the total price based on the actual seat prices
-    total_price = sum(seat.price for seat in seats)
+    if remaining_seats < 10:
+        price_multiplier += 0.2
+    if 0 < time_to_show <= 3:
+        price_multiplier += 0.15
+    if time_to_show > 6:
+        price_multiplier -= 0.1
 
+    total_price = sum((seat.price or base_price) * price_multiplier for seat in seats)
     booked_seats = ', '.join(seat.seat_number for seat in seats)
 
     with transaction.atomic():
-        for seat_id in selected_seats:
-            seat = get_object_or_404(Seat, id=int(seat_id), theater=theater)
-
-            # Check if seat is already booked
-            if seat.is_booked:
-                messages.error(request, f"Seat {seat.seat_number} is already booked.")
+        for seat in seats:
+            seat.refresh_from_db()
+            if seat.is_booked or seat.is_reserved:
+                messages.error(request, f"Seat {seat.seat_number} is no longer available.")
                 return redirect('seat_selection', theater_id=theater.id)
-
-            # Check if the seat is reserved and expired
-            seat.release_if_expired()
-
-            # If seat is still reserved, prevent double reservation
-            if seat.is_reserved:
-                messages.error(request, f"Seat {seat.seat_number} is currently reserved. Try again later.")
-                return redirect('seat_selection', theater_id=theater.id)
-
-            # Reserve seat
             seat.is_reserved = True
             seat.reserved_at = now()
             seat.save()
 
-    # Store in session for further processing
     request.session['selected_seats'] = selected_seats
     request.session['theater_id'] = theater_id
-
-    # PayPal Payment Process
     paypal_dict = {
         "business": settings.PAYPAL_RECEIVER_EMAIL,
         "amount": str(total_price),
@@ -111,97 +102,48 @@ def book_seats(request, theater_id):
         "return_url": request.build_absolute_uri(reverse('payment_success')),
         "cancel_return": request.build_absolute_uri(reverse('payment_cancel')),
     }
-
     form = PayPalPaymentsForm(initial=paypal_dict)
-
-    return render(request, 'movies/paypal_payment.html', {
-        "form": form,
-        "theater": theater,
-        "total_price": total_price,
-        "selected_seats": booked_seats
-    })
-
+    return render(request, 'movies/paypal_payment.html', {"form": form, "theater": theater, "total_price": total_price, "selected_seats": booked_seats})
 @login_required
 def payment_success(request):
-    theater_id = request.session.get('theater_id')
-    selected_seats = request.session.get('selected_seats', [])
+    theater_id = request.session.pop('theater_id', None)
+    selected_seats = request.session.pop('selected_seats', [])
 
     if not theater_id or not selected_seats:
         messages.error(request, "Payment successful, but booking information is missing.")
         return redirect('movie_list')
 
     theater = get_object_or_404(Theater, id=theater_id)
-
     with transaction.atomic():
         for seat_id in selected_seats:
             seat = get_object_or_404(Seat, id=int(seat_id), theater=theater)
-
-            # Ensure seat is reserved
             if not seat.is_reserved:
                 messages.error(request, f"Seat {seat.seat_number} reservation expired. Please rebook.")
                 return redirect('seat_selection', theater_id=theater.id)
-
-            # Finalize the booking
             seat.is_reserved = False
             seat.is_booked = True
             seat.reserved_at = None
             seat.save()
+            Booking.objects.create(user=request.user, movie=theater.movie, theater=theater, seat=seat, amount=seat.price, is_paid=True)
 
-            # Create booking record
-            Booking.objects.create(
-                user=request.user,
-                movie=theater.movie,
-                theater=theater,
-                seat=seat,
-                amount=seat.price,
-                is_paid=True
-            )
-
-    # Clear session data
-    request.session.pop('selected_seats', None)
-    request.session.pop('theater_id', None)
-
-    # Send email confirmation
     send_booking_confirmation_email(request.user, theater, selected_seats, len(selected_seats) * 500)
-
     messages.success(request, "Payment successful! Your booking is confirmed.")
     return render(request, "movies/booking_success.html", {"theater": theater, "selected_seats": selected_seats})
-
-
 def send_booking_confirmation_email(user, theater, seat_numbers, amount):
+    currency_symbol = "₹" if settings.CURRENCY == "INR" else "$"
     subject = f"Booking Confirmation - {theater.movie.name}"
-    message = (
-        f"Dear {user.username},\n\n"
-        f"Your booking for {theater.movie.name} at {theater.name} is confirmed.\n"
-        f"Seats: {', '.join(seat_numbers)}\n"
-        f"Total: ₹{amount}\n\n"
-        "Thank you for choosing our service!"
-    )
+    message = (f"Dear {user.username},\n\nYour booking for {theater.movie.name} at {theater.name} is confirmed.\nSeats: {', '.join(seat_numbers)}\nTotal: {currency_symbol}{amount}\n\nThank you for choosing our service!")
     send_mail(subject, message, settings.EMAIL_HOST_USER, [user.email], fail_silently=False)
 
 @login_required
 def payment_cancel(request):
-    selected_seats = request.session.get('selected_seats', [])
-    theater_id = request.session.get('theater_id')
-
+    selected_seats = request.session.pop('selected_seats', [])
+    theater_id = request.session.pop('theater_id', None)
     if theater_id and selected_seats:
         theater = get_object_or_404(Theater, id=theater_id)
-
-        with transaction.atomic():
-            for seat_id in selected_seats:
-                seat = get_object_or_404(Seat, id=int(seat_id), theater=theater)
-                seat.release_if_expired()  # Automatically releases if expired
-                seat.is_reserved = False
-                seat.reserved_at = None
-                seat.save()
-
-    # Clear session data
-    request.session.pop('selected_seats', None)
-    request.session.pop('theater_id', None)
-
+        Seat.objects.filter(id__in=selected_seats, theater=theater).update(is_reserved=False, reserved_at=None)
     messages.error(request, "Payment cancelled. Your reserved seats have been released.")
     return redirect('movie_list')
-
 
 def payment_view(request, theater_id):
     theater = get_object_or_404(Theater, id=theater_id)

@@ -1,10 +1,12 @@
 from django.shortcuts import render
 from django.db.models import Count, Sum
-from .models import Booking
+from django.apps import apps  # ✅ Import get_model utility
 
 def admin_dashboard(request):
+    Booking = apps.get_model('movies', 'Booking')  # ✅ Dynamically load the model
+
     total_bookings = Booking.objects.count()
-    total_revenue = Booking.objects.aggregate(Sum('total_price'))['total_price__sum'] or 0
+    total_revenue = Booking.objects.aggregate(Sum('amount'))['amount__sum'] or 0
     total_users = Booking.objects.values('user').distinct().count()
     total_seats = Booking.objects.count()
 

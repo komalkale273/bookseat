@@ -1,58 +1,31 @@
-from django.shortcuts import render
-from django.db.models import Sum, Count
-from movies.models import Booking, Movie, Theater
-from django.contrib.auth.models import User
-import datetime
+from django.db import models
+from movies.models import Booking  # Ensure Booking is properly imported
 
-def admin_dashboard(request):
-    # Total Revenue
-    total_revenue = Booking.objects.aggregate(total=Sum('price'))['total'] or 0
+class BookingReport(models.Model):
+    booking = models.OneToOneField(Booking, on_delete=models.CASCADE, related_name="report")
+    revenue = models.DecimalField(max_digits=10, decimal_places=2)
+    booking_date = models.DateField(auto_now_add=True)
 
-    # Total Bookings
-    total_bookings = Booking.objects.count()
+    def __str__(self):
+        return f"Report for Booking ID {self.booking.id} - {self.revenue}"
 
-    # Total Users Registered
-    total_users = User.objects.count()
+class PopularMovie(models.Model):
+    movie_name = models.CharField(max_length=255)
+    total_bookings = models.IntegerField(default=0)
 
-    # Top 5 Movies by Bookings
-    top_movies = (
-        Booking.objects.values('movie__title')  # Ensure 'title' exists in Movie model
-        .annotate(total=Count('id'))
-        .order_by('-total')[:5]
-    )
+    def __str__(self):
+        return f"{self.movie_name} - {self.total_bookings} bookings"
 
-    # Busiest Theaters (Top 5)
-    busiest_theaters = (
-        Booking.objects.values('theater__name')  # Ensure 'name' exists in Theater model
-        .annotate(total=Count('id'))
-        .order_by('-total')[:5]
-    )
+class TheaterTraffic(models.Model):
+    theater_name = models.CharField(max_length=255)
+    total_visits = models.IntegerField(default=0)
 
-    # Most Active Users (Top 5)
-    most_active_users = (
-        Booking.objects.values('user__username')
-        .annotate(total=Count('id'))
-        .order_by('-total')[:5]
-    )
+    def __str__(self):
+        return f"{self.theater_name} - {self.total_visits} visits"
 
-    # Bookings Over Time (Last 7 Days)
-    today = datetime.date.today()
-    last_week = today - datetime.timedelta(days=7)
-    bookings_over_time = (
-        Booking.objects.filter(created_at__gte=last_week)
-        .values('created_at__date')
-        .annotate(total=Count('id'))
-        .order_by('created_at__date')
-    )
+class ActiveUser(models.Model):
+    username = models.CharField(max_length=150)
+    total_bookings = models.IntegerField(default=0)
 
-    context = {
-        'total_revenue': total_revenue,
-        'total_bookings': total_bookings,
-        'total_users': total_users,
-        'top_movies': top_movies,
-        'busiest_theaters': busiest_theaters,
-        'most_active_users': most_active_users,
-        'bookings_over_time': bookings_over_time,
-    }
-
-    return render(request, 'analytics/dashboard.html', context)
+    def __str__(self):
+        return f"{self.username} - {self.total_bookings} bookings"

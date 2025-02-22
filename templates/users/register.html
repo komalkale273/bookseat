@@ -1,5 +1,10 @@
-{% extends "users/basic.html" %} {% block content %}
-<div class="container py-5">
+{% extends "users/basic.html" %}
+
+{% block content %}
+
+
+
+ <!-- <div class="container py-5">
   <div class="row justify-content-center">
     <div class="col-md-8">
       <div class="card shadow">
@@ -50,68 +55,80 @@
   </div>
 </div>
 
-<!-- Font Awesome -->
+Font Awesome
 <link
   rel="stylesheet"
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
-/>
+/> -->
+<div class="relative min-h-screen flex items-center justify-center">
+  <!-- Background Image -->
+  <img src="https://storage.googleapis.com/a1aa/image/iLyxuvfGyB8TM3klFfTWbmuWAEqWLkGf5wGTTo5hM28.jpg" 
+       alt="Background image with various movie posters"
+       class="absolute inset-0 w-full h-full object-cover opacity-50"/>
 
-<style>
-  .card {
-    border-radius: 1rem;
-  }
-  .card-header {
-    border-top-left-radius: 1rem;
-    border-top-right-radius: 1rem;
-  }
-  .input-group-text {
-    background-color: #f8f9fa;
-  }
-  .form-control:focus {
-    box-shadow: none;
-    border-color: #80bdff;
-  }
-  .invalid-feedback {
-    display: block;
-  }
-</style>
-
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const form = document.querySelector("form");
-    const inputs = form.querySelectorAll("input");
-
-    inputs.forEach((input) => {
-      input.classList.add("form-control");
-      if (input.type === "password") {
-        const toggleBtn = document.createElement("button");
-        toggleBtn.type = "button";
-        toggleBtn.className = "btn btn-outline-secondary";
-        toggleBtn.innerHTML = '<i class="fas fa-eye"></i>';
-        toggleBtn.onclick = function () {
-          if (input.type === "password") {
-            input.type = "text";
-            this.innerHTML = '<i class="fas fa-eye-slash"></i>';
-          } else {
-            input.type = "password";
-            this.innerHTML = '<i class="fas fa-eye"></i>';
-          }
-        };
-        input.parentNode.appendChild(toggleBtn);
-      }
-    });
-  });
-</script>
-<!-- <div class="container mt-4">
-    <h2>Register</h2>
-    <form method="POST">
-      {% csrf_token %}
-      {{ form.as_p }}
-      <div>
-        <button class="btn btn-primary mt-2" type="submit">Register</button>
+  <div class="relative z-10 flex flex-col md:flex-row items-center justify-center w-full max-w-6xl mx-auto p-6">
+      <!-- Left Section: Title -->
+      <div class="text-center md:text-left md:w-1/2 mb-8 md:mb-0">
+          <h1 class="text-6xl font-bold text-white">
+              <span class="text-purple-600">C</span>ine 
+              <span class="font-great-vibes">Sphere</span>
+          </h1>
+          <p class="text-3xl font-bold mt-4">The world’s Largest Movie Library</p>
       </div>
-    </form>
-    <p>Already have an account? <a href="{% url 'login' %}">Register here</a>.</p>
-    
-  </div> -->
+
+      <!-- Signup Form -->
+      <div class="bg-gray-800 bg-opacity-75 p-8 rounded-lg shadow-lg md:w-1/2">
+          <div class="flex justify-between mb-4">
+              <a href="{% url 'login' %}" class="text-xl text-purple-400">Login</a>
+              <a href="{% url 'register' %}" class="text-xl text-white font-bold">Signup</a>
+          </div>
+
+          <p class="mb-4">Register Now to watch your favourite shows</p>
+          <p class="mb-4 text-center">Or</p>
+
+          <form method="POST">
+              {% csrf_token %}
+              {% for field in form %}
+              <div class="mb-4">
+                  <label class="sr-only" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                  <div class="relative">
+                      <input type="{{ field.field.widget.input_type }}" 
+                             name="{{ field.name }}" 
+                             id="{{ field.id_for_label }}"
+                             placeholder="{{ field.label }}"
+                             class="w-full p-3 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
+                      <i class="fas fa-{% if field.name == 'username' %}user{% elif field.name == 'email' %}envelope{% elif field.name == 'password1' or field.name == 'password2' %}lock{% else %}info-circle{% endif %} absolute right-3 top-3 text-gray-400"></i>
+                  </div>
+                  {% for error in field.errors %}
+                  <div class="text-red-500 text-sm mt-1">{{ error }}</div>
+                  {% endfor %}
+              </div>
+              {% endfor %}
+
+              <!-- Terms & Conditions -->
+              <div class="mb-4 flex items-center">
+                  <input type="checkbox" id="terms" class="mr-2">
+                  <label for="terms" class="text-sm">
+                      I agree to the 
+                      <a href="#" class="text-purple-400">Privacy Policy</a> & 
+                      <a href="#" class="text-purple-400">Terms and Conditions</a>
+                  </label>
+              </div>
+
+              <!-- Signup Button -->
+              <button type="submit" class="w-full p-3 bg-purple-600 text-white rounded-lg font-bold hover:bg-purple-700">
+                  Sign Up
+              </button>
+          </form>
+
+          <!-- Social Media Icons -->
+          <div class="flex justify-center mt-4 space-x-4">
+              <a href="#" class="text-white"><i class="fab fa-facebook-f"></i></a>
+              <a href="#" class="text-white"><i class="fab fa-twitter"></i></a>
+              <a href="#" class="text-white"><i class="fab fa-instagram"></i></a>
+          </div>
+      </div>
+  </div>
+</div>
 {% endblock %}
+

@@ -2,6 +2,9 @@ from pathlib import Path
 import os
 import dj_database_url 
 from django.urls import reverse_lazy
+import logging
+
+logging.getLogger("django.server").addFilter(lambda record: "Broken pipe" not in record.getMessage())
 
 
 
@@ -14,6 +17,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 CURRENCY_SYMBOL = "₹"  # Change if needed
 CURRENCY_CODE = "INR"  # Change to "USD" if PayPal requires it
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
 
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'your-default-secret-key')
@@ -175,6 +182,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "komalkale157@gmail.com"
 EMAIL_HOST_PASSWORD = 'zgon jjwy buls eaxf'  # Ensure you use secure credentials
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000', 'http://localhost:8000']
 
 SITE_ID = 10
 

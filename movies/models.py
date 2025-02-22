@@ -39,7 +39,7 @@ class Movie(models.Model):
     genre = models.CharField(max_length=100, default="Unknown")
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default="Action")
     is_recommended = models.BooleanField(default=False)
-    cast=models.TextField(default="Bolleywood")
+    cast = models.TextField(default="Bollywood")
 
     def get_embed_url(self):
         if not self.trailer_url:
@@ -53,7 +53,6 @@ class Movie(models.Model):
     @staticmethod
     def get_recommended_movies(user):
         booked_movies = Movie.objects.filter(bookings__user=user).distinct()
-
         if not booked_movies.exists():
             return Movie.objects.order_by('-rating')[:5]
 
@@ -80,7 +79,7 @@ class Theater(models.Model):
     base_price = models.DecimalField(max_digits=6, decimal_places=2, default=100.00)
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name="theaters")
     show_time = models.DateTimeField(default=timezone.now, blank=True)
-   
+
     def __str__(self):
         return self.name
 
@@ -90,8 +89,7 @@ class Seat(models.Model):
     is_booked = models.BooleanField(default=False)
     is_reserved = models.BooleanField(default=False)
     reserved_at = models.DateTimeField(null=True, blank=True)
-    price=models.IntegerField(default=100)
-
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=100.00)
 
     def is_currently_reserved(self):
         if not self.reserved_at:
@@ -105,6 +103,21 @@ class Seat(models.Model):
             self.reserved_at = None
             self.save()
 
+    def calculate_dynamic_price(self):
+        base_price = self.theater.base_price
+        total_seats = self.theater.seats.count()
+        available_seats = self.theater.seats.filter(is_booked=False).count()
+        demand_factor = 1 + ((total_seats - available_seats) / total_seats) * 0.5 if total_seats else 1
+        time_remaining = (self.theater.show_time - now()).total_seconds() / 3600 if self.theater.show_time else 0
+        time_factor = 1
+        if time_remaining < 24:
+            time_factor = 1.2
+        elif time_remaining < 12:
+            time_factor = 1.5
+        elif time_remaining < 6:
+            time_factor = 2
+        return round(base_price * demand_factor * time_factor, 2)
+
     def __str__(self):
         return f'Seat {self.seat_number} in {self.theater.name} - {"Booked" if self.is_booked else "Available"}'
 
@@ -117,45 +130,8 @@ class Booking(models.Model):
     is_paid = models.BooleanField(default=False)
     booked_at = models.DateTimeField(auto_now_add=True)
 
-    def calculate_dynamic_price(self):
-        base_price = self.theater.base_price
-        total_seats = self.theater.seats.count()
-        available_seats = self.theater.seats.filter(is_booked=False).count()
-        demand_factor = 1 + ((total_seats - available_seats) / total_seats) * 0.5
-        time_remaining = (self.theater.show_time - now()).total_seconds() / 3600 if self.theater.show_time else 0
-        time_factor = 1
-        if time_remaining < 24:
-            time_factor = 1.2
-        elif time_remaining < 12:
-            time_factor = 1.5
-        elif time_remaining < 6:
-            time_factor = 2
-        return round(base_price * demand_factor * time_factor, 2)
-
-    @staticmethod
-    def calculate_dynamic_price_static(seat, movie, theater):
-        base_price = theater.base_price
-        total_seats = theater.seats.count()
-        available_seats = theater.seats.filter(is_booked=False).count()
-        demand_factor = 1 + ((total_seats - available_seats) / total_seats) * 0.5 if total_seats else 1
-        
-        if not theater.show_time:
-            return base_price
-        
-        time_remaining = (theater.show_time - now()).total_seconds() / 3600
-        time_factor = 1
-        if time_remaining < 24:
-            time_factor = 1.2
-        elif time_remaining < 12:
-            time_factor = 1.5
-        elif time_remaining < 6:
-            time_factor = 2
-        
-        return round(base_price * demand_factor * time_factor, 2)
-
 class SeatReservation(models.Model):
     STATUS_CHOICES = [("Pending", "Pending"), ("Confirmed", "Confirmed"), ("Expired", "Expired"), ("Cancelled", "Cancelled")]
-
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reservations")
     seat = models.ForeignKey(Seat, on_delete=models.CASCADE, related_name="reservations")
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)

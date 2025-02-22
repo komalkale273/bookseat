@@ -1,56 +1,70 @@
 {% extends "users/basic.html" %} {% block content %}
 
-<div class="container py-5">
-  <div class="row justify-content-center">
-    <div class="col-lg-6">
-      <!-- User Info Card -->
-      <div class="card shadow-sm text-center p-4 border-0">
-        <i class="fas fa-user-circle fa-6x text-primary mb-3"></i>
-        <h3 class="mb-1">{{ user.username }}</h3>
-        <p class="text-muted">{{ user.email }}</p>
-        <a href="#" class="btn btn-outline-primary w-100 mb-2">
-          <i class="fas fa-envelope me-2"></i> Message
-        </a>
-        <a href="{% url 'password_reset' %}" class="btn btn-outline-secondary w-100">
-          <i class="fas fa-key me-2"></i> Reset Password
-        </a>
-      </div>
-    </div>
-  </div>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Great+Vibes&display=swap" rel="stylesheet"/>
 
-  <!-- Bookings Section -->
-  <div class="row justify-content-center mt-4">
-    <div class="col-lg-8">
-      <div class="card shadow-sm border-0">
-        <div class="card-header bg-success text-white text-center">
-          <h4 class="mb-0">
-            <i class="fas fa-ticket-alt me-2"></i> Your Bookings
-          </h4>
-          <a href="{% url 'user_bookings' %}" class="btn btn-light btn-sm mt-2">View All</a>
-        </div>
-        
+<div class="relative min-h-screen flex items-center justify-center">
+  <img alt="Background image with various movie posters" class="absolute inset-0 w-full h-full object-cover opacity-50" 
+       src="https://storage.googleapis.com/a1aa/image/iLyxuvfGyB8TM3klFfTWbmuWAEqWLkGf5wGTTo5hM28.jpg" 
+       width="1920" height="1080"/>
+  <div class="relative z-10 flex flex-col items-center justify-center w-full max-w-4xl mx-auto p-6">
+      <div class="text-center mb-8">
+          <h1 class="text-6xl font-bold text-white">
+              <span class="text-purple-600">C</span>ine
+              <span class="font-great-vibes">Sphere</span>
+          </h1>
+          <p class="text-3xl font-bold mt-4 text-white">User Profile</p>
       </div>
-    </div>
+      <div class="bg-gray-800 bg-opacity-75 p-8 rounded-lg shadow-lg w-full">
+          <div class="text-center mb-8">
+              <i class="fas fa-user-circle fa-6x text-purple-600 mb-3"></i>
+              <h3 class="mb-1 text-white">{{ user.username }}</h3>
+              <p class="text-gray-300">{{ user.email }}</p>
+              
+              <a class="block w-full bg-transparent border border-white text-white py-2 px-4 rounded-lg 
+                        hover:bg-white hover:text-gray-900 transition duration-300 mt-2"
+                 href="#">
+                  <i class="fas fa-envelope me-2"></i> Message
+              </a>
+              <a class="block w-full bg-transparent border border-white text-white py-2 px-4 rounded-lg 
+                        hover:bg-white hover:text-gray-900 transition duration-300 mt-2"
+                 href="{% url 'password_reset' %}">
+                  <i class="fas fa-key me-2"></i> Reset Password
+              </a>
+          </div>
+          <div class="bg-gray-800 bg-opacity-75 p-6 rounded-lg shadow-lg w-full">
+              <div class="text-center bg-purple-600 text-white p-4 rounded-lg">
+                  <h4 class="mb-0 font-semibold text-lg">
+                      <i class="fas fa-ticket-alt me-2"></i> Your Bookings
+                  </h4>
+                  <a class="block w-full bg-white text-purple-600 font-semibold py-2 px-4 rounded-lg 
+                            hover:bg-gray-300 transition duration-300 mt-2"
+                     href="{% url 'user_bookings' %}">
+                      View All
+                  </a>
+              </div>
+          </div>
+      </div>
   </div>
 </div>
 
-<!-- Font Awesome Icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
-
 <style>
   body {
-    background-color: #f8f9fa;
+      font-family: 'Roboto', sans-serif;
+      background-color: #f8f9fa;
   }
   .card {
-    border-radius: 10px;
-    transition: all 0.3s ease-in-out;
+      border-radius: 10px;
+      transition: all 0.3s ease-in-out;
   }
   .card:hover {
-    transform: translateY(-3px);
+      transform: translateY(-3px);
   }
   .list-group-item {
-    border-radius: 5px;
+      border-radius: 5px;
   }
 </style>
+
 
 {% endblock %}

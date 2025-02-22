@@ -14,6 +14,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.exceptions import ValidationError
 from .models import FAQ
 from .forms import FAQForm
+from django.views.decorators.csrf import csrf_protect
 from users.forms import (
     UserRegisterForm, UserUpdateForm, ContactMessage,
     CustomPasswordResetForm, CustomSetPasswordForm, CustomPasswordChangeForm
@@ -39,26 +40,46 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('profile')
+            return redirect('/')
     else:
         form = UserRegisterForm()
     return render(request, 'users/register.html', {'form': form})
 
 
+from django.middleware.csrf import get_token
 
+@csrf_protect
 def login_view(request):
-    if request.method == "POST":
-        username = request.POST["username"]
-        password = request.POST["password"]
-        user = authenticate(request, username=username, password=password)
-        
-        if user is not None:
-            login(request, user)
-            return redirect("dashboard")  # Change this to the actual redirect page
-        else:
-            return render(request, "users/login.html", {"error": "Invalid credentials"})
+    print("CSRF Token:", get_token(request))  # Debugging Line
 
-    return render(request, "users/login.html")
+    if request.user.is_authenticated:
+        messages.warning(request, 'You are already logged in')
+        return redirect('core:index')
+
+    if request.method == "POST":
+        print("Received CSRF Token:", request.POST.get('csrfmiddlewaretoken'))  # Debugging Line
+        
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        try:
+            user = User.objects.get(username=username)
+            user = authenticate(request, username=username, password=password)
+
+            if user is not None:
+                login(request, user)
+                messages.success(request, f'Welcome {username}!!')
+                return redirect('/')
+
+            else:
+                messages.warning(request, f'User {username} .. Wrong credentials!!')
+
+        except User.DoesNotExist:
+            messages.warning(request, f'User {username} does not exist')
+
+    return render(request, 'users/login.html', {})
+
+    return render(request, 'users/login.html')
 @login_required
 def profile(request):
     bookings = Booking.objects.filter(user=request.user)
@@ -154,4 +175,4 @@ def faq_view(request):
             form.save()
             return redirect('faq')  # Refresh the page after submission
 
-    return render(request, 'faq.html', {'faqs': faqs, 'form': form})
+    return render(request, 'users/faq.html', {'faqs': faqs, 'form': form})

@@ -1,10 +1,23 @@
 {% extends "users/basic.html" %}
 
 {% block content %}
-    <h2>Booking Successful!</h2>
+<div class="bg-gray-900 text-white min-h-screen flex items-center justify-center relative">
+    <img alt="Background image with various movie posters" class="absolute inset-0 w-full h-full object-cover opacity-50" height="1080" src="https://storage.googleapis.com/a1aa/image/v8JDThOSg_NloqJocamj6huQ6hJr6MsI1JMJiBWgma8.jpg" width="1920"/>
+    <div class="relative bg-gray-800 bg-opacity-75 p-8 rounded-lg shadow-lg w-full max-w-md text-center">
+        <h2 class="text-2xl font-bold mb-4">Booking Successful!</h2>
+        <p class="mb-2">Thank you for your booking, {{ request.user.username }}!</p>
+        <p class="mb-2">Theater: {{ theater.name }}</p>
+        <p class="mb-2">Seats: {{ selected_seats|join:", " }}</p>
+        <p class="mb-4">Your payment was successful.</p>
+        <a href="{% url 'movie_list' %}" class="w-full bg-purple-600 py-3 rounded-lg text-white font-bold hover:bg-purple-700 mt-4 inline-block">Go Back to Movies</a>
+    </div>
+</div>
+    
+{% endblock %}
+
+<!-- <h2>Booking Successful!</h2>
     <p>Thank you for your booking, {{ request.user.username }}!</p>
     <p>Theater: {{ theater.name }}</p>
     <p>Seats: {{ selected_seats|join:", " }}</p>
     <p>Your payment was successful.</p>
-    <a href="{% url 'movie_list' %}">Go Back to Movies</a>
-{% endblock %}
+    <a href="{% url 'movie_list' %}">Go Back to Movies</a> -->

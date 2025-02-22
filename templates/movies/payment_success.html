@@ -1,3 +1,8 @@
-<h2>Payment Successful! 🎉</h2>
-<p>Thank you for booking your seat for {{ booking.movie }}.</p>
-<a href="{% url 'movie_list' %}">Go to Movies</a>
+<div class="bg-gray-900 text-white min-h-screen flex items-center justify-center relative">
+    <img alt="Background image with various movie posters" class="absolute inset-0 w-full h-full object-cover opacity-50" height="1080" src="https://storage.googleapis.com/a1aa/image/v8JDThOSg_NloqJocamj6huQ6hJr6MsI1JMJiBWgma8.jpg" width="1920"/>
+    <div class="relative bg-gray-800 bg-opacity-75 p-8 rounded-lg shadow-lg w-full max-w-md text-center">
+        <h2 class="text-2xl font-bold mb-4">Payment Successful! 🎉</h2>
+        <p class="mb-4">Thank you for booking your seat for {{ booking.movie }}.</p>
+        <a href="{% url 'movie_list' %}" class="w-full bg-purple-600 py-3 rounded-lg text-white font-bold hover:bg-purple-700 mt-4 inline-block">Go to Movies</a>
+    </div>
+</div>

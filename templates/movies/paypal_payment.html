@@ -1,12 +1,70 @@
 {% extends "users/basic.html" %}
 {% block content %}
-<h2>Confirm Payment</h2>
+
+<div class="bg-gray-900 text-white min-h-screen flex items-center justify-center relative">
+    <img alt="Background image with various movie posters" class="absolute inset-0 w-full h-full object-cover opacity-50" height="1080" src="https://storage.googleapis.com/a1aa/image/v8JDThOSg_NloqJocamj6huQ6hJr6MsI1JMJiBWgma8.jpg" width="1920"/>
+    <div class="relative bg-gray-800 bg-opacity-75 p-8 rounded-lg shadow-lg w-full max-w-md text-center">
+     <h2 class="text-2xl font-bold mb-4">
+      Confirm Payment
+     </h2>
+     <p class="mb-2">
+      Movie: {{ theater.movie.name }}
+     </p>
+     <p class="mb-2">
+      Theater: {{ theater.name }}
+     </p>
+     <p class="mb-2">
+      Selected Seats: {{ selected_seats }}
+     </p>
+     <p class="mb-4">
+      Total Price: ₹{{ total_price }}
+     </p>
+     <!-- Timer Display -->
+     <p class="mb-6">
+      Time Left to Complete Payment:
+      <span class="font-bold" id="countdown-timer">
+       5:00
+      </span>
+     </p>
+     <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
+      {% csrf_token %}
+              {{ form.render }}
+      <button class="w-full bg-purple-600 py-3 rounded-lg text-white font-bold hover:bg-purple-700 mt-4" type="submit">
+       Pay Now
+      </button>
+     </form>
+    </div>
+    <script>
+     function startCountdown(duration, display) {
+              let timer = duration, minutes, seconds;
+              let countdownInterval = setInterval(function () {
+                  minutes = Math.floor(timer / 60);
+                  seconds = timer % 60;
+                  seconds = seconds < 10 ? "0" + seconds : seconds;
+                  display.textContent = minutes + ":" + seconds;
+  
+                  if (--timer < 0) {
+                      clearInterval(countdownInterval);
+                      display.textContent = "Time Expired!";
+                  }
+              }, 1000);
+          }
+  
+          document.addEventListener("DOMContentLoaded", function () {
+              let display = document.getElementById("countdown-timer");
+              startCountdown(300, display); // 5 minutes (300 seconds)
+          });
+    </script>
+   </div>
+
+{% endblock content %}
+<!-- <h2>Confirm Payment</h2>
 <p>Movie: {{ theater.movie.name }}</p>
 <p>Theater: {{ theater.name }}</p>
 <p>Selected Seats: {{ selected_seats }}</p>
 <p>Total Price: ₹{{ total_price }}</p>
 
-<!-- Timer Display -->
+
 <p>Time Left to Complete Payment: <span id="countdown-timer">5:00</span></p>
 
 <form method="post" action="https://www.sandbox.paypal.com/cgi-bin/webscr">
@@ -35,6 +93,4 @@
         startCountdown(300, display); // 5 minutes (300 seconds)
     });
 </script>
-
-
-{% endblock content %}
+ 

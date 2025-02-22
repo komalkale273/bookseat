@@ -1,18 +1,37 @@
 {% extends "users/basic.html" %}
 {% block content %}
-    <h2>Booking Confirmation</h2>
-    
-    <p><strong>Seats Booked:</strong> 
-        {% if selected_seats %}
-            {{ selected_seats|join:", " }}
-        {% else %}
-            No seats selected
-        {% endif %}
-    </p>
+<body class="bg-gray-900 text-white min-h-screen flex items-center justify-center relative">
+    <img alt="Background image with various movie posters" class="absolute inset-0 w-full h-full object-cover opacity-50" height="1080" src="https://storage.googleapis.com/a1aa/image/v8JDThOSg_NloqJocamj6huQ6hJr6MsI1JMJiBWgma8.jpg" width="1920"/>
+    <div class="relative bg-gray-800 bg-opacity-75 p-8 rounded-lg shadow-lg w-full max-w-md text-center">
+        <h2 class="text-2xl font-bold mb-4">Booking Confirmation</h2>
+        
+        <p class="mb-2"><strong>Seats Booked:</strong> 
+            {% if selected_seats %}
+                {{ selected_seats|join:", " }}
+            {% else %}
+                No seats selected
+            {% endif %}
+        </p>
 
-    <p><strong>Theater:</strong> {{ theater.name }}</p>
-    <p><strong>Show Time:</strong> {{ show_time }}</p>
-    <p><strong>Total Amount Paid:</strong> ₹{{ total_price }}</p>
-    <p>A confirmation email has been sent to <strong>{{ email }}</strong>.</p>
+        <p class="mb-2"><strong>Theater:</strong> {{ theater.name }}</p>
+        <p class="mb-2"><strong>Show Time:</strong> {{ show_time }}</p>
+        <p class="mb-4"><strong>Total Amount Paid:</strong> ₹{{ total_price }}</p>
+        <p class="mb-4">A confirmation email has been sent to <strong>{{ email }}</strong>.</p>
+    </div>
+</body>
 
 {% endblock content %}
+<!-- <h2>Booking Confirmation</h2>
+    
+<p><strong>Seats Booked:</strong> 
+    {% if selected_seats %}
+        {{ selected_seats|join:", " }}
+    {% else %}
+        No seats selected
+    {% endif %}
+</p>
+
+<p><strong>Theater:</strong> {{ theater.name }}</p>
+<p><strong>Show Time:</strong> {{ show_time }}</p>
+<p><strong>Total Amount Paid:</strong> ₹{{ total_price }}</p>
+<p>A confirmation email has been sent to <strong>{{ email }}</strong>.</p> -->

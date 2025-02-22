@@ -1,85 +1,73 @@
 {% extends "users/basic.html" %}
-{% block title %}Login - BookMySeat{% endblock %}
+{% block title %}Login - CineSphere{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white">
-                    <h5>Log In</h5>
+<div class="relative min-h-screen flex items-center justify-center">
+    <!-- Background Image -->
+    <img alt="Background image with various movie posters" 
+        class="absolute inset-0 w-full h-full object-cover opacity-50"
+        src="https://storage.googleapis.com/a1aa/image/8xCzhCDxnhvVZZW5aJxaaBNiCNCWV6eHJBB7q7R33yY.jpg"/>
+
+    <div class="relative z-10 flex flex-col md:flex-row items-center justify-center space-y-8 md:space-y-0 md:space-x-16 p-8 w-full">
+        <!-- Branding Section -->
+        <div class="text-center md:text-left">
+            <h1 class="text-6xl font-bold text-white">
+                <span class="text-purple-600">C</span>ine
+                <span class="text-purple-600">S</span>phere
+            </h1>
+            <p class="text-3xl font-bold mt-4 text-white">The world's Largest Movie Library</p>
+        </div>
+
+        <!-- Login Card -->
+        <div class="bg-gray-800 bg-opacity-75 p-8 rounded-lg shadow-lg w-full max-w-md">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-white">Login</h2>
+                <a class="text-purple-600 hover:underline" href="{% url 'register' %}">Sign up</a>
+            </div>
+            <p class="mb-6 text-white">Log in to watch your favourite shows</p>
+
+            <!-- Django Messages -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="p-3 rounded-md mb-4 text-white 
+                        {% if message.tags == 'warning' %}bg-yellow-500{% elif message.tags == 'error' %}bg-red-500{% else %}bg-green-500{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <!-- Login Form -->
+            <form method="POST" action="{% url 'login' %}">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label class="block text-white font-medium" for="username">Username</label>
+                    <input class="w-full p-3 mt-1 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                        id="username" placeholder="Enter your username" name="username" type="text" required />
                 </div>
-                <div class="card-body">
-                    <form method="POST" action="{% url 'login' %}">
-                        {% csrf_token %}
-                        {{ form.as_p }}
-                        <button type="submit" class="btn btn-primary text-white">Login</button>
-                    </form>
-                    <a href="{% url 'password_reset' %}">Forgot Password?</a>
+                <div class="mb-4">
+                    <label class="block text-white font-medium" for="password">Password</label>
+                    <input class="w-full p-3 mt-1 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-600"
+                        id="password" placeholder="Enter your password" name="password" type="password" required/>
                 </div>
+                <div class="flex items-center justify-between mb-6">
+                    <label class="flex items-center text-white">
+                        <input class="form-checkbox text-purple-600 focus:ring-purple-600" type="checkbox" name="remember_me"/>
+                        <span class="ml-2">Remember Me</span>
+                    </label>
+                    <a class="text-purple-400 hover:underline" href="{% url 'password_reset' %}">Forgot Password?</a>
+                </div>
+                <button class="w-full bg-purple-600 py-3 rounded-lg text-white font-bold hover:bg-purple-700 transition" type="submit">
+                    LOGIN
+                </button>
+            </form>
+
+            <!-- Social Media Links -->
+            <div class="flex justify-center space-x-4 mt-6">
+                <a class="text-white hover:text-purple-400 transition" href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                <a class="text-white hover:text-purple-400 transition" href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a class="text-white hover:text-purple-400 transition" href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
             </div>
         </div>
     </div>
-</div> 
-
-
-
-
-
-
-
-
-
-<!-- <div class="flex justify-center items-center min-h-screen bg-gray-900">
-    <div class="w-full max-w-md bg-gray-800 rounded-lg shadow-md p-8">
-        <h2 class="text-3xl font-bold text-center text-white mb-6">Login to CineSphere</h2>
-
-        {% if form.errors %}
-        <div class="bg-red-500 text-white text-sm p-3 rounded mb-4">
-            <ul>
-                {% for error in form.non_field_errors %}
-                    <li>{{ error }}</li>
-                {% endfor %}
-                {% for field, errors in form.errors.items %}
-                    {% for error in errors %}
-                        <li>{{ error }}</li>
-                    {% endfor %}
-                {% endfor %}
-            </ul>
-        </div>
-        {% endif %}
-
-        <form method="POST" action="{% url 'login' %}">
-            {% csrf_token %}
-
-            <div class="mb-4">
-                <label class="block text-gray-400 mb-2" for="username">Email Address</label>
-                <input type="text" name="email" id="email" placeholder="Enter your email" required>
-
-            </div>
-
-            <div class="mb-6">
-                <label class="block text-gray-400 mb-2" for="password">Password</label>
-                <input type="text" name="username" id="username" placeholder="Enter your email" required>
-
-            </div>
-
-            <div class="flex items-center justify-between mb-6">
-                <div class="flex items-center">
-                    <input class="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded" type="checkbox" id="remember">
-                    <label class="ml-2 text-gray-400" for="remember">Remember me</label>
-                </div>
-                <a class="text-purple-500 hover:underline" href="{% url 'password_reset' %}">Forgot Password?</a>
-            </div>
-
-            <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-6 rounded-lg transition">
-                Login
-            </button>
-        </form>
-
-        <p class="text-center text-gray-400 mt-6">Don't have an account? 
-            <a class="text-purple-500 hover:underline" href="{% url 'register' %}">Sign Up</a>
-        </p>
-    </div>
-</div> -->
+</div>
 {% endblock %}
