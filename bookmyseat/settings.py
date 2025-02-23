@@ -15,8 +15,8 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-CURRENCY_SYMBOL = "₹"  # Change if needed
-CURRENCY_CODE = "INR"  # Change to "USD" if PayPal requires it
+CURRENCY_SYMBOL = "₹" 
+CURRENCY_CODE = "INR"  
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 SECURE_BROWSER_XSS_FILTER = True
@@ -25,7 +25,7 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'your-default-secret-key')
 
-
+CURRENCY = 'INR'
 
 DEBUG = True
 ALLOWED_HOSTS = ['*']
@@ -103,7 +103,7 @@ WSGI_APPLICATION = 'bookmyseat.wsgi.application'
 DATABASES = {
     'default': dj_database_url.parse(
         "postgresql://postgres:uHxydXAGVjfGesSejLQWacKXviEJUJLQ@roundhouse.proxy.rlwy.net:50985/railway",
-         conn_max_age=600,
+         conn_max_age=600
     )
 }
 

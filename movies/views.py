@@ -15,6 +15,7 @@ from .models import Movie, Theater, Seat, Booking
 from paypal.standard.forms import PayPalPaymentsForm
 from django.utils.timezone import localtime
 from urllib.parse import urlparse,parse_qs
+from decimal import Decimal
 
 def movie_list(request):
     search_query = request.GET.get('search', '')
@@ -58,7 +59,7 @@ def seat_selection(request, theater_id):
 def book_seats(request, theater_id):
     theater = get_object_or_404(Theater, id=theater_id)
     selected_seats = request.POST.getlist('seats')
-
+    
     if not selected_seats:
         messages.error(request, "No seats selected. Please select at least one seat.")
         return redirect('seat_selection', theater_id=theater.id)
@@ -67,17 +68,21 @@ def book_seats(request, theater_id):
     remaining_seats = Seat.objects.filter(theater=theater, is_booked=False).count()
     showtime = theater.showtime
     time_to_show = (showtime - timezone.now()).total_seconds() / 3600
-    base_price = 500
-    price_multiplier = 1.0
+    base_price = Decimal("500.00")  # Ensure base price is Decimal
+    price_multiplier = Decimal("1.0")
 
     if remaining_seats < 10:
-        price_multiplier += 0.2
+        price_multiplier += Decimal("0.2")
     if 0 < time_to_show <= 3:
-        price_multiplier += 0.15
+        price_multiplier += Decimal("0.15")
     if time_to_show > 6:
-        price_multiplier -= 0.1
+        price_multiplier -= Decimal("0.1")
 
-    total_price = sum((seat.price or base_price) * price_multiplier for seat in seats)
+    price_per_ticket = theater.base_price 
+    number_of_tickets = len(selected_seats)  # Corrected ticket count
+
+    total_price = price_per_ticket * Decimal(number_of_tickets)
+
     booked_seats = ', '.join(seat.seat_number for seat in seats)
 
     with transaction.atomic():
@@ -92,6 +97,7 @@ def book_seats(request, theater_id):
 
     request.session['selected_seats'] = selected_seats
     request.session['theater_id'] = theater_id
+
     paypal_dict = {
         "business": settings.PAYPAL_RECEIVER_EMAIL,
         "amount": str(total_price),
@@ -102,8 +108,14 @@ def book_seats(request, theater_id):
         "return_url": request.build_absolute_uri(reverse('payment_success')),
         "cancel_return": request.build_absolute_uri(reverse('payment_cancel')),
     }
+
     form = PayPalPaymentsForm(initial=paypal_dict)
-    return render(request, 'movies/paypal_payment.html', {"form": form, "theater": theater, "total_price": total_price, "selected_seats": booked_seats})
+    return render(request, 'movies/paypal_payment.html', {
+        "form": form,
+        "theater": theater,
+        "total_price": total_price,
+        "selected_seats": booked_seats,
+    })
 @login_required
 def payment_success(request):
     theater_id = request.session.pop('theater_id', None)

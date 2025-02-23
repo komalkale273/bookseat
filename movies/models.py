@@ -6,6 +6,8 @@ from django.db.models import Count
 from datetime import timedelta
 import logging
 from django.utils.timezone import now
+import datetime
+
 
 logger = logging.getLogger(__name__)
 
@@ -79,6 +81,7 @@ class Theater(models.Model):
     base_price = models.DecimalField(max_digits=6, decimal_places=2, default=100.00)
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name="theaters")
     show_time = models.DateTimeField(default=timezone.now, blank=True)
+    showtime = models.DateTimeField(default=datetime.datetime.now)
 
     def __str__(self):
         return self.name
