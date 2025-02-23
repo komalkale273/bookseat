@@ -27,13 +27,13 @@ from django.contrib.auth.views import (
 )
 
 
-# Home Page
+
 def home(request):
     movies = Movie.objects.all()
     return render(request, 'home.html', {'movies': movies})
 
 
-# User Registration
+
 def register(request):
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
@@ -94,7 +94,7 @@ def profile(request):
     return render(request, 'users/profile.html', {'form': form, 'bookings': bookings})
 
 
-# Contact Page
+
 def contact(request):
     if request.method == "POST":
         name, email, message = request.POST.get('name'), request.POST.get('email'), request.POST.get('message')
@@ -109,19 +109,19 @@ def contact(request):
     return render(request, 'users/contact.html')
 
 
-# User Bookings
+
 @login_required
 def user_bookings(request):
     bookings = Booking.objects.filter(user=request.user)
     return render(request, 'users/user_bookings.html', {'bookings': bookings})
 
 
-# About Page
+
 def about(request):
     return render(request, "users/about.html")
 
 
-# Password Reset Views
+
 class CustomPasswordResetView(PasswordResetView):
     template_name = "users/password_reset.html"
     email_template_name = "users/password_reset_email.html"
@@ -148,7 +148,7 @@ class CustomPasswordResetCompleteView(PasswordResetCompleteView):
     template_name = "users/password_reset_complete.html"
 
 
-# Password Change Views
+
 class CustomPasswordChangeView(PasswordChangeView):
     template_name = "users/password_change.html"
     success_url = reverse_lazy('password_change_done')
@@ -159,7 +159,7 @@ class CustomPasswordChangeDoneView(PasswordChangeDoneView):
     template_name = "users/password_change_done.html"
 
 
-# Logout View
+
 class CustomLogoutView(LogoutView):
     def get(self, request, *args, **kwargs):
         logout(request)
@@ -173,6 +173,6 @@ def faq_view(request):
         form = FAQForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('faq')  # Refresh the page after submission
+            return redirect('faq')  
 
     return render(request, 'users/faq.html', {'faqs': faqs, 'form': form})

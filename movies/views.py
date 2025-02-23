@@ -68,7 +68,7 @@ def book_seats(request, theater_id):
     remaining_seats = Seat.objects.filter(theater=theater, is_booked=False).count()
     showtime = theater.showtime
     time_to_show = (showtime - timezone.now()).total_seconds() / 3600
-    base_price = Decimal("500.00")  # Ensure base price is Decimal
+    base_price = Decimal("500.00") 
     price_multiplier = Decimal("1.0")
 
     if remaining_seats < 10:
@@ -79,7 +79,7 @@ def book_seats(request, theater_id):
         price_multiplier -= Decimal("0.1")
 
     price_per_ticket = theater.base_price 
-    number_of_tickets = len(selected_seats)  # Corrected ticket count
+    number_of_tickets = len(selected_seats)  
 
     total_price = price_per_ticket * Decimal(number_of_tickets)
 
@@ -175,17 +175,16 @@ def payment_view(request, theater_id):
 def recommendations(request):
     user = request.user
 
-    # Get movies booked by the user
+   
     user_booked_movies = Booking.objects.filter(user=user).values_list('movie_id', flat=True)
 
-    # Get categories of the booked movies
     user_booked_categories = (
         Movie.objects.filter(id__in=user_booked_movies)
         .values_list('category', flat=True)
         .distinct()
     )
 
-    # Recommend movies based on category preference, excluding already booked ones
+    
     if user_booked_categories:
         recommended_movies = (
             Movie.objects.filter(category__in=user_booked_categories)
@@ -193,7 +192,7 @@ def recommendations(request):
             .order_by('-rating')[:6]
         )
     else:
-        # Fallback: Show top-rated movies if no booking history
+       
         recommended_movies = Movie.objects.all().order_by('-rating')[:6]
 
     return render(request, "movies/recommendations.html", {"movies": recommended_movies})

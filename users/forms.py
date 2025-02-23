@@ -7,14 +7,14 @@ from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth.forms import PasswordChangeForm
 from .models import FAQ
-# Base Form to apply styling to all fields
+
 class BaseForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in self.fields.values():
             field.widget.attrs.update({'class': 'form-control'})
 
-# User Registration Form
+
 class UserRegisterForm(BaseForm, UserCreationForm):
     email = forms.EmailField()
 
@@ -28,7 +28,7 @@ class UserRegisterForm(BaseForm, UserCreationForm):
             raise forms.ValidationError("This email is already in use.")
         return email
 
-# User Update Form
+
 class UserUpdateForm(BaseForm, forms.ModelForm):
     email = forms.EmailField()
 
@@ -42,7 +42,7 @@ class UserUpdateForm(BaseForm, forms.ModelForm):
             raise forms.ValidationError("This email is already in use.")
         return email
 
-# Contact Form
+
 class ContactForm(BaseForm, forms.ModelForm):
     class Meta:
         model = ContactMessage
@@ -50,7 +50,7 @@ class ContactForm(BaseForm, forms.ModelForm):
 
 
 
-# Profile Update Form
+
 class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = User
