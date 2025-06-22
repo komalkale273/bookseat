@@ -102,7 +102,7 @@ WSGI_APPLICATION = 'bookmyseat.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.parse(
-        "postgresql://postgres:uHxydXAGVjfGesSejLQWacKXviEJUJLQ@roundhouse.proxy.rlwy.net:50985/railway",
+        "postgresql://neondb_owner:npg_HLbWu5JTKw7s@ep-shy-feather-a8sb3zvs-pooler.eastus2.azure.neon.tech/neondb?sslmode=require",
          conn_max_age=600
     )
 }
