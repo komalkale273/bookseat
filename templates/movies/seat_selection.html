@@ -1,18 +1,23 @@
 {% extends "users/basic.html" %}
 {% block content %}
     
-
-
 <div class="bg-gray-900 text-white">
     <div class="relative min-h-screen flex items-center justify-center">
-        <img alt="Background image of various movie posters" class="absolute inset-0 w-full h-full object-cover opacity-50" height="1080" src="https://storage.googleapis.com/a1aa/image/URwoWJEaF_XdmIvH0eV0d8gHHpIrP1kDuhVNy0_vJW0.jpg" width="1920"/>
-        <div class="relative z-10 flex flex-col items-center justify-center w-full max-w-6xl p-6">
+       <img
+    alt="Background image of various movie posters"
+    src="https://www.shutterstock.com/image-photo/black-cinema-white-wide-screen-600nw-1533309236.jpg"
+    class="absolute inset-0 w-full h-full object-cover opacity-30"
+  />
+  <div class="absolute inset-0 bg-black bg-opacity-60"></div>
+        <div class="relative z-10 flex items-center justify-center min-h-screen px-4">
             <div class="text-center mb-8">
                
                 <p class="text-3xl font-bold mt-4">
                     <div class="relative min-h-screen flex items-center justify-center mt-10">
-                        <div class="bg-gray-800 bg-opacity-75 p-8 rounded-lg shadow-lg w-full max-w-4xl">
-                            <h2 class="text-2xl font-bold text-white mb-4">Select Your Seats - {{ theater.name }}</h2>
+                        <div class="bg-gray-800 bg-opacity-75 p-8 rounded-lg shadow-lg w-full max-w-6xl">
+                            <h2 class="text-3xl md:text-4xl font-bold text-center text-white mb-6">
+        🎟️ Select Your Seats - {{ theater.name }}
+      </h2>
                     
                             {% if messages %}
                                 <ul class="mb-4">
@@ -24,10 +29,12 @@
                     
                             <form method="POST" action="{% url 'book_seats' theater.id %}">
                                 {% csrf_token %}
-                                <div class="flex flex-wrap">
+                                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 text-sm">
                                     {% for seat in seats %}
+                                    
                                         <label class="m-2 p-2 border rounded-lg {% if seat.is_booked %} text-gray-500 line-through {% else %} text-white {% endif %}">
-                                            <input type="checkbox" name="seats" value="{{ seat.id }}" {% if seat.is_booked %}disabled{% endif %}>
+                                            <span class="mr-2"><input type="checkbox" name="seats" value="{{ seat.id }}" {% if seat.is_booked %}disabled{% endif %} 
+                                            class="peer h-5 w-5 cursor-pointer transition-all appearance-none rounded shadow hover:shadow-md border border-slate-300 checked:bg-indigo-600 checked:border-indigo-600"></span>
                                             Seat {{ seat.seat_number }} - ${{ seat.price }} {% if seat.is_booked %}(Booked){% endif %}
                                         </label>
                                     {% endfor %}
