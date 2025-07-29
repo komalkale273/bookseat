@@ -3,65 +3,71 @@
 {% block title %}Your Booking{% endblock %}
 {% block content %}
 
-    <div class="relative min-h-screen flex items-center justify-center">
-        <img alt="Background image with various movie posters" class="absolute inset-0 w-full h-full object-cover opacity-50" height="1080" src="https://storage.googleapis.com/a1aa/image/iLyxuvfGyB8TM3klFfTWbmuWAEqWLkGf5wGTTo5hM28.jpg" width="1920"/>
-        <div class="relative z-10 flex flex-col items-center justify-center w-full max-w-6xl mx-auto p-6">
-            <div class="text-center mb-8">
-                <h1 class="text-6xl font-bold text-white">
-                    <span class="text-purple-600"></span>
-                    <span class="font-great-vibes"></span>
-                </h1>
-                <p class="text-3xl font-bold mt-4">Your Bookings</p>
-            </div>
-            <div class="bg-gray-800 bg-opacity-75 p-8 rounded-lg shadow-lg w-full">
-                <div class="card shadow">
-                    <div class="card-header bg-purple-600 text-white text-center">
-                        <h4><i class="fas fa-ticket-alt me-2"></i> Your Bookings</h4>
-                    </div>
-                    <div class="card-body">
-                        
-                        {% if bookings %}
-                        <div class="table-responsive">
-                         
-                            <table class="table table-bordered text-center">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Movie</th>
-                                        <th>Theater</th>
-                                        <th>Seat</th>
-                                        <th>Booking Date</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                  {% for booking in bookings %}
-                                    <tr>
-                                        <td><strong>{{ booking.movie.name|capfirst }}</strong></td>
-                                        <td>{{ booking.theater|capfirst }}</td>
-                                        <td>{{ booking.seat.seat_number }}</td>
-                                        <td>{{ booking.booked_at|date:"F d, Y H:i" }}</td>
-                                        <td><span class="badge bg-success">Confirmed</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Avengers: Endgame</strong></td>
-                                        <td>Dolby Cinema</td>
-                                        <td>B15</td>
-                                        <td>April 5, 2023 19:00</td>
-                                        <td><span class="badge bg-success">Confirmed</span></td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                        {% else %}
-                        <div class="text-center py-4">
-                            <i class="fas fa-ticket-alt fa-4x text-muted mb-3"></i>
-                            <p class="lead">No bookings yet. Time to plan your next movie night!</p>
-                        </div>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="relative min-h-screen flex items-center justify-center bg-black">
+  <!-- Background Image -->
+  <img 
+    src="https://storage.googleapis.com/a1aa/image/iLyxuvfGyB8TM3klFfTWbmuWAEqWLkGf5wGTTo5hM28.jpg" 
+    alt="Movie background" 
+    class="absolute inset-0 w-full h-full object-cover opacity-20" 
+  />
+
+  <!-- Overlay Content -->
+  <div class="relative z-10 w-full max-w-6xl px-6 py-12">
+    <!-- Title -->
+    <div class="text-center mb-8">
+      <h1 class="text-5xl font-extrabold text-white drop-shadow-md">
+        🎬 Your Bookings
+      </h1>
+      <p class="text-lg text-gray-200 mt-2">Track your movie adventures</p>
     </div>
+
+    <!-- Glassy Card -->
+    <div class="backdrop-blur-md bg-white/10 rounded-2xl p-6 shadow-xl border border-white/20">
+      <div class="text-center mb-6">
+        <h2 class="text-2xl font-semibold text-white tracking-wide">
+          <i class="fas fa-ticket-alt mr-2"></i> Booking Summary
+        </h2>
+      </div>
+
+      {% if bookings %}
+      <!-- Table -->
+      <div class="overflow-x-auto rounded-lg">
+        <table class="min-w-full table-auto border-collapse text-white text-center">
+          <thead>
+            <tr class="bg-purple-600/70 text-sm uppercase tracking-wider">
+              <th class="py-3 px-4">Movie</th>
+              <th class="py-3 px-4">Theater</th>
+              <th class="py-3 px-4">Seat</th>
+              <th class="py-3 px-4">Booking Date</th>
+              <th class="py-3 px-4">Status</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white/10">
+            {% for booking in bookings %}
+            <tr class="hover:bg-white/20 transition">
+              <td class="py-3 px-4 font-semibold">{{ booking.movie.name|capfirst }}</td>
+              <td class="py-3 px-4">{{ booking.theater|capfirst }}</td>
+              <td class="py-3 px-4">{{ booking.seat.seat_number }}</td>
+              <td class="py-3 px-4">{{ booking.booked_at|date:"F d, Y H:i" }}</td>
+              <td class="py-3 px-4">
+                <span class="inline-block bg-green-500 text-white px-3 py-1 rounded-full text-xs font-medium">
+                  Confirmed
+                </span>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <!-- No Bookings Message -->
+      <div class="text-center text-white py-10">
+        <i class="fas fa-ticket-alt fa-4x text-purple-400 mb-4"></i>
+        <p class="text-lg font-medium">No bookings yet. Time to plan your next movie night! 🍿</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
   {% endblock %}
