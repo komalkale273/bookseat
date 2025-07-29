@@ -3,47 +3,71 @@
 {% block content %}
 
 
-<div class="bg-gray-900 text-white min-h-screen flex flex-col items-center justify-center relative">
-    <img alt="Background image with various movie posters" class="absolute inset-0 w-full h-full object-cover opacity-50" height="1080" src="https://storage.googleapis.com/a1aa/image/v8JDThOSg_NloqJocamj6huQ6hJr6MsI1JMJiBWgma8.jpg" width="1920"/>
-    <div class="relative container mx-auto mt-4 px-4">
-        {% if not user.is_authenticated %}
-        <div class="bg-blue-100 border-t border-b border-blue-500 text-blue-700 px-4 py-3 text-center" role="alert">
-            <p class="font-bold">Authentication Required</p>
-            <p class="text-sm">
-                <a href="{% url 'login' %}" class="text-blue-700 underline">Login</a> or
-                <a href="{% url 'register' %}" class="text-blue-700 underline">Register</a> to continue.
-            </p>
-        </div>
-        {% endif %}
+<div class="bg-gray-900 text-white min-h-screen relative">
+  <!-- Background Image -->
+  <img
+    src="https://storage.googleapis.com/a1aa/image/v8JDThOSg_NloqJocamj6huQ6hJr6MsI1JMJiBWgma8.jpg"
+    alt="Background"
+    class="absolute inset-0 w-full h-full object-cover opacity-30 z-0"
+  />
 
-        
-        <div class="text-center my-8">
-            <h2 class="text-3xl font-bold text-white">🎬 Recommended for You</h2>
-        </div>
-        {% if movies %}
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {% for movie in movies %}
-            <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden transform transition duration-300 hover:scale-105 flex flex-col h-full">
-                <img src="{{ movie.image.url }}" class="w-full h-64 object-cover" alt="{{ movie.name }}">
-                <div class="p-4 flex flex-col flex-grow">
-                    <h3 class="text-lg font-bold text-white">{{ movie.name }}</h3>
-                    <p class="text-sm text-gray-400 mt-2 flex-grow">{{ movie.description|truncatechars:100 }}</p>
-                    <p class="text-sm text-gray-400 mt-2"><strong>⭐ Rating:</strong> {{ movie.rating }}</p>
-                    <div class="mt-4">
-                        <a href="{% url 'movie_detail' movie.id %}" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">View Details</a>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-        {% else %}
-        <div class="bg-blue-100 border-t border-b border-blue-500 text-blue-700 px-4 py-3 text-center" role="alert">
-            <p class="font-bold">No Recommendations</p>
-            <p class="text-sm">No recommendations available yet.</p>
-        </div>
-        {% endif %}
+  <div class="relative z-10 container mx-auto px-4 py-12">
+    <!-- Alert if not authenticated -->
+    {% if not user.is_authenticated %}
+    <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-900 p-4 rounded mb-6 shadow-md text-center">
+      <p class="font-semibold text-lg">🔒 Authentication Required</p>
+      <p class="text-sm mt-1">
+        <a href="{% url 'login' %}" class="underline font-medium hover:text-yellow-700">Login</a>
+        or
+        <a href="{% url 'register' %}" class="underline font-medium hover:text-yellow-700">Register</a>
+        to continue.
+      </p>
     </div>
+    {% endif %}
+
+    <!-- Section Title -->
+    <div class="text-center mb-10">
+      <h2 class="text-4xl font-extrabold text-white tracking-tight">
+        🎬 Recommended for You
+      </h2>
+      <p class="text-gray-300 mt-2">Explore trending picks specially curated for you</p>
+    </div>
+
+    {% if movies %}
+    <!-- Movies Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+      {% for movie in movies %}
+      <div class="bg-gray-800 backdrop-blur-sm bg-opacity-70 rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transform hover:-translate-y-1 transition duration-300 flex flex-col">
+        <img
+          src="{{ movie.image.url }}"
+          alt="{{ movie.name }}"
+          class="w-full h-64 object-cover rounded-t-2xl"
+        />
+        <div class="p-5 flex flex-col flex-grow">
+          <h3 class="text-xl font-bold text-white mb-2">{{ movie.name }}</h3>
+          <p class="text-sm text-gray-300 flex-grow">{{ movie.description|truncatechars:100 }}</p>
+          <div class="mt-4 text-sm text-yellow-400">
+            ⭐ <strong>Rating:</strong> {{ movie.rating }}
+          </div>
+          <a
+            href="{% url 'movie_detail' movie.id %}"
+            class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition"
+          >
+            View Details
+          </a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <!-- No Recommendations -->
+    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-4 rounded relative text-center mt-6">
+      <strong class="font-bold">😞 No Recommendations</strong>
+      <span class="block sm:inline">No recommendations available yet. Check back later!</span>
+    </div>
+    {% endif %}
   </div>
+</div>
 
 {% endblock %}
 
