@@ -28,58 +28,72 @@
   </head>
   <body class="bg-black">
    
-    <nav class="bg-gray-900 text-white">
-      <div class="container mx-auto px-4 py-2 flex justify-between items-center">
-        <div class="flex items-center">
-          <img alt="logo" src="https://i.pinimg.com/736x/de/21/49/de2149945264604a637e2f19bfab7f58.jpg" width="30"/> 
-        </div>
-        <div><span class="font-bold text-lg">Movie Tickets</span></div>
-        <div class="hidden md:flex space-x-6">
-          
-          <a class="hover:text-gray-400" href="/">Home</a>
-          <a class="hover:text-gray-400" href="/movies">Movies</a>
-          <a class="hover:text-gray-400" href="{% url 'about' %}">About Us</a>
-          <a class="hover:text-gray-400" href="{% url 'contact' %}">Contact Us</a>
-          {% if user.is_authenticated %}
-          <a class="hover:text-gray-400" href="{% url 'recommendations' %}">Recommended Movies</a>
-          <a class="hover:text-gray-400" href="{% url 'password_change' %}">Change Password</a>
-
-          <a class="hover:text-gray-400" href="{% url 'profile' %}">Profile</a>
-          
-          
-        </div>
-        <div class="hidden md:flex space-x-4">
-        
-          
-          <button class="bg-white text-gray-900 px-4 py-1 rounded hover:bg-gray-200"> <a class="nav-link" href="{% url 'logout' %}">LOGOUT</a></button>
-          
-        </div>
-        {% else %}
-        <div class="hidden md:flex space-x-4">
-        
-          <button class="border border-white px-4 py-1 rounded hover:bg-gray-700"><a class="nav-link" href="{% url 'login' %}">LOGIN</a></button>
-          <button class="bg-white text-gray-900 px-4 py-1 rounded hover:bg-gray-200"> <a class="nav-link" href="{% url 'register' %}">SIGNUP</a></button>
-            
-        </div>
-        {% endif %}
-
-
-        <div class="md:hidden">
-          <button class="text-white" onclick="toggleMenu()">
-            <i class="fas fa-bars"></i>
-          </button>
-        </div>
+   <nav class="backdrop-blur bg-white/10 text-white shadow-md sticky top-0 z-50">
+  <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+    
+   <!-- Logo & Brand -->
+    <div class="flex items-center justify-between w-full md:w-auto">
+      <div class="flex items-center space-x-3">
+        <img src="https://i.pinimg.com/736x/de/21/49/de2149945264604a637e2f19bfab7f58.jpg" alt="Logo" class="w-8 h-8 rounded-full">
+        <span class="font-bold text-lg tracking-wider">Movie Tickets</span>
       </div>
-      <div id="mobile-menu" class="hidden md:hidden">
-        <a class="block px-4 py-2 hover:bg-gray-700" href="#">Home</a>
-        <a class="block px-4 py-2 hover:bg-gray-700" href="#">About</a>
-        <a class="block px-4 py-2 hover:bg-gray-700" href="#">Services</a>
-        <a class="block px-4 py-2 hover:bg-gray-700" href="#">Terms &amp; Condition</a>
-        <a class="block px-4 py-2 hover:bg-gray-700" href="#">Help</a>
-        <button class="block w-full text-left border-t border-gray-700 px-4 py-2 hover:bg-gray-700">LOGIN</button>
-        <button class="block w-full text-left bg-white text-gray-900 px-4 py-2 hover:bg-gray-200">SIGNUP</button>
-      </div>
-    </nav>
+      <!-- Hamburger for Mobile -->
+      <button class="text-white md:hidden" onclick="toggleMenu()">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+
+    <!-- Centered Links -->
+    <div class="hidden md:flex justify-center flex-1 space-x-6 mt-3 md:mt-0 text-sm font-medium">
+      <a href="/" class="hover:text-gray-300 transition duration-200">Home</a>
+      <a href="/movies" class="hover:text-gray-300 transition duration-200">Movies</a>
+      <a href="{% url 'about' %}" class="hover:text-gray-300 transition duration-200">About Us</a>
+      <a href="{% url 'contact' %}" class="hover:text-gray-300 transition duration-200">Contact Us</a>
+      {% if user.is_authenticated %}
+        <a href="{% url 'recommendations' %}" class="hover:text-gray-300 transition duration-200">Recommended</a>
+        <a href="{% url 'password_change' %}" class="hover:text-gray-300 transition duration-200">Change Password</a>
+        <a href="{% url 'profile' %}" class="hover:text-gray-300 transition duration-200">Profile</a>
+      {% endif %}
+    </div>
+
+    <!-- Auth Buttons -->
+    <div class="hidden md:flex space-x-4 mt-3 md:mt-0">
+      {% if user.is_authenticated %}
+        <a href="{% url 'logout' %}" class="bg-white text-black px-4 py-1 rounded hover:bg-gray-200 font-semibold">Logout</a>
+      {% else %}
+        <a href="{% url 'login' %}" class="border border-white px-4 py-1 rounded hover:bg-gray-700 font-semibold">Login</a>
+        <a href="{% url 'register' %}" class="bg-white text-black px-4 py-1 rounded hover:bg-gray-200 font-semibold">Signup</a>
+      {% endif %}
+    </div>
+
+  </div>
+
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="hidden md:hidden px-4 pt-2 pb-4 space-y-2 text-sm font-medium">
+    <a href="/" class="block hover:bg-gray-700 px-4 py-2 rounded">Home</a>
+    <a href="/movies" class="block hover:bg-gray-700 px-4 py-2 rounded">Movies</a>
+    <a href="{% url 'about' %}" class="block hover:bg-gray-700 px-4 py-2 rounded">About Us</a>
+    <a href="{% url 'contact' %}" class="block hover:bg-gray-700 px-4 py-2 rounded">Contact Us</a>
+    {% if user.is_authenticated %}
+      <a href="{% url 'recommendations' %}" class="block hover:bg-gray-700 px-4 py-2 rounded">Recommended</a>
+      <a href="{% url 'password_change' %}" class="block hover:bg-gray-700 px-4 py-2 rounded">Change Password</a>
+      <a href="{% url 'profile' %}" class="block hover:bg-gray-700 px-4 py-2 rounded">Profile</a>
+      <a href="{% url 'logout' %}" class="block bg-white text-black px-4 py-2 rounded hover:bg-gray-200">Logout</a>
+    {% else %}
+      <a href="{% url 'login' %}" class="block border border-white px-4 py-2 rounded hover:bg-gray-700">Login</a>
+      <a href="{% url 'register' %}" class="block bg-white text-black px-4 py-2 rounded hover:bg-gray-200">Signup</a>
+    {% endif %}
+  </div>
+</nav>
+
+<!-- JS Toggle -->
+<script>
+  function toggleMenu() {
+    const menu = document.getElementById("mobile-menu");
+    menu.classList.toggle("hidden");
+  }
+</script>
+
     
     <div class="container">{% block content %} {% endblock %}</div>
     <footer class="bg-black py-12">
